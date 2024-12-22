@@ -11,3 +11,9 @@ def login(request):
 def students(request):
     context ={}
     return render(request, "admission_exam_db/students.html", context)
+
+def student_detail(request, student_id):
+    context ={
+        "student_id": student_id,
+    }
+    return render(request, "admission_exam_db/student_detail.html", context)
