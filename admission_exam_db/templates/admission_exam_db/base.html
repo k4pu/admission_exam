@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device=width, initial-scale=1.0">
+    <title>{% blocktitle %}School Apps{% endblock %}</title>
+    <!-- 共通のCSSファイル -->
+    <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
+</head>
+<body>
+    <!-- <header>
+        <h1><a href="{% url 'home' %}">School Apps</a></h1>
+        <nav>
+            <ul>
+                <li><a href="{% 'home' %}">Home</a></li>
+            </ul>
+        </nav>
+    </header> -->
+
+    <!-- コンテンツ部分 -->
+    <main>
+        {% block content %}
+        子テンプレートがここにコンテンツを挿入する
+        {% endblock %}
+    </main>
+
+    <!-- フッター部分 -->
+    <!-- <script src="{% static 'js/script.js' %}"></script> -->
+</body>
+</html>
