@@ -50,3 +50,4 @@ Thumbs.db
 
 # added ignore files
 *.env
+*.sqlite3
