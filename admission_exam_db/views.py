@@ -7,3 +7,7 @@ def index(request):
 def login(request):
     context = {}
     return render(request, "admission_exam_db/login.html", context)
+
+def students(request):
+    context ={}
+    return render(request, "admission_exam_db/students.html", context)
