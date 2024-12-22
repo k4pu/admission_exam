@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'admission_exam_db.apps.AdmissionExamDbConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
