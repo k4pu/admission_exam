@@ -1,4 +1,4 @@
 Django>=4.0,<5.0
-psycopg2-binary>=2.9,<3.0 # PostgreSQL用ドライバ
+psycopg[binary]>=3.2,<3.3
 django-debug-toolbar>=3.0 # Debug tool
 python-dotenv>=0.21 # .env読み込み用
