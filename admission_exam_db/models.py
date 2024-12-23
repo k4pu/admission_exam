@@ -9,7 +9,7 @@ class Student(models.Model):
         return " ".join([self.family_name, self.given_name])
 
 class UniversityFuculty(models.Model):
-    university_code = models.CharField(max_length=5, primary_key=True)# 記入用大学コード(５桁)
+    university_faculty_code = models.CharField(max_length=5, primary_key=True)# 記入用大学コード(５桁)
     university_name = models.CharField(max_length=10)  # 大学短縮名
     faculty_name = models.CharField(max_length=10) # 学部短縮名
     department_name = models.CharField(max_length=20) # 学科短縮名

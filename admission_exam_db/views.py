@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from .forms import CSVUploadForm
 
 from.models import Student
 
@@ -21,3 +22,20 @@ def student_detail(request, student_id):
         "student_name": " ".join([student.family_name, student.given_name])
     }
     return render(request, "admission_exam_db/student_detail.html", context)
+
+def upload_unviersity_fuculty(request):
+    if request.method == "POST":
+        form = CSVUploadForm(request.POST, request.FILES)
+        if form.is_valid()
+            csv_file = request.FILES['csv_file']
+            decoded_file = csv_file.read().decode('utf-8').splitlines()
+            reader = csv.DictReader(decoded_file)
+            for row in reader:
+                university_faculty_code = row['university_faculty_code']
+                university_name = row['university_name']
+                faculty_name = row['faculty_name']
+                department_name = row['department_name']
+                display_name = row['display_name']
+                faculty_system_midstream_name = row['faculty_system_midstream_name']
+                faculty_system_field_code = row['faculty_system_field_code']
+                faculty_system_field_name = row['faculty_system_field_name']
