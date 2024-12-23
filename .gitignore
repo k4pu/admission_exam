@@ -51,6 +51,7 @@ Thumbs.db
 # added ignore files
 *.env
 *.sqlite3
+*.csv
 
 # Djangoの設定
 *.log
@@ -64,4 +65,3 @@ __pycache__/
 # static file and media file
 /static/
 media/
-
