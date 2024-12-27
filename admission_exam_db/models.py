@@ -8,7 +8,7 @@ class Student(models.Model):
     def __str__(self):
         return " ".join([self.family_name, self.given_name])
 
-class UniversityFuculty(models.Model):
+class UniversityFaculty(models.Model):
     university_faculty_code = models.CharField(max_length=5, primary_key=True)# 記入用大学コード(５桁)
     university_name = models.CharField(max_length=10)  # 大学短縮名
     faculty_name = models.CharField(max_length=10) # 学部短縮名
