@@ -1,9 +1,13 @@
 from django.db import models
 
 class Student(models.Model):
-    student_id = models.CharField(max_length=20, primary_key=True)
-    family_name = models.CharField(max_length=20)
-    given_name = models.CharField(max_length=20)
+    student_id = models.CharField(max_length=10, primary_key=True)
+    homeroom_class = models.CharField(max_length=1)
+    attendance_number = models.CharField(max_length=2)
+    family_name = models.CharField(max_length=30)
+    given_name = models.CharField(max_length=30)
+    family_name_kana = models.CharField(max_length=30)
+    given_name_kana = models.CharField(max_length=30)
 
     def __str__(self):
         return " ".join([self.family_name, self.given_name])

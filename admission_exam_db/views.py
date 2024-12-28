@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from .forms import UniversityFacultyCSVUploadForm
+from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm
 
 from.models import Student, UniversityFaculty
 
@@ -61,3 +61,37 @@ def upload_university_faculty(request):
     else:
         form = UniversityFacultyCSVUploadForm()
     return render(request, 'admission_exam_db/upload_university_faculty.html', {'form': form})
+
+def upload_student(request):
+    if request.method == "POST":
+        form = StudentCSVUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            csv_file = request.FILES['csv_file']
+            decoded_file = csv_file.read().decode('utf-8-sig').splitlines()
+            reader = csv.DictReader(decoded_file)
+            for row in reader:
+                student_id = row['student_id']
+                homeroom_class = row['homeroom_class']
+                attendance_number = row['attendance_number']
+                family_name = row['family_name']
+                given_name = row['given_name']
+                family_name_kana = row['family_name_kana']
+                given_name_kana = row['given_name_kana']
+
+                # データモデルに保存
+                Student.objects.update_or_create(
+                    student_id=student_id,
+                    defaults={
+                        'homeroom_class': homeroom_class,
+                        'attendance_number': attendance_number,
+                        'family_name': family_name,
+                        'given_name': given_name,
+                        'family_name_kana': family_name_kana,
+                        'given_name': given_name,
+                        'given_name_kana': given_name_kana,
+                    }
+                )
+            return redirect('admission_exam_db/upload_student.html') # アップロード成功画面にリダイレクト
+    else:
+        form = StudentCSVUploadForm()
+    return render(request, 'admission_exam_db/upload_student.html', {'form': form})
