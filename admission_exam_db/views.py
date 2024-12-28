@@ -2,7 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from .forms import UniversityFacultyCSVUploadForm
 
-from.models import Student
+from.models import Student, UniversityFaculty
+
+import csv
 
 def index(request):
     return HttpResponse("Hello this is admission exam db app!")
@@ -28,7 +30,7 @@ def upload_university_faculty(request):
         form = UniversityFacultyCSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
             csv_file = request.FILES['csv_file']
-            decoded_file = csv_file.read().decode('utf-8').splitlines()
+            decoded_file = csv_file.read().decode('utf-8-sig').splitlines()
             reader = csv.DictReader(decoded_file)
             for row in reader:
                 university_faculty_code = row['university_faculty_code']
@@ -41,11 +43,11 @@ def upload_university_faculty(request):
                 faculty_system_field_name = row['faculty_system_field_name']
 
                 # データモデルに保存
-                universit.objects.update_or_create(
+                UniversityFaculty.objects.update_or_create(
                     university_faculty_code=university_faculty_code,
                     defaults={
                         'university_name': university_name,
-                        'uiversity_faculty_code': uiversity_faculty_code,
+                        'university_faculty_code': university_faculty_code,
                         'university_name': university_name,
                         'faculty_name': faculty_name,
                         'department_name': department_name,
