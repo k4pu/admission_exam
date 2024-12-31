@@ -14,7 +14,10 @@ def login(request):
     return render(request, "admission_exam_db/login.html", context)
 
 def students(request):
-    context ={}
+    student_list = Student.objects.order_by("student_id")
+    context ={
+        "student_list": student_list,
+    }
     return render(request, "admission_exam_db/students.html", context)
 
 def student_detail(request, student_id):
