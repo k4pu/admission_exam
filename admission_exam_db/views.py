@@ -13,12 +13,12 @@ def login(request):
     context = {}
     return render(request, "admission_exam_db/login.html", context)
 
-def students(request):
+def student(request):
     student_list = Student.objects.order_by("student_id")
     context ={
         "student_list": student_list,
     }
-    return render(request, "admission_exam_db/students.html", context)
+    return render(request, "admission_exam_db/student.html", context)
 
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
