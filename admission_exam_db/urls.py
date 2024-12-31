@@ -2,6 +2,7 @@ from django.urls import path, include
 
 from . import views
 
+app_name = "admission_exam_db"
 urlpatterns = [
     path("", views.index, name="index"),
     path("login/", views.login, name="login"),
