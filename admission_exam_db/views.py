@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm
 
-from.models import Student, UniversityFaculty
+from.models import Student, UniversityFaculty, StudentAdmissionExam
 
 import csv
 
@@ -22,9 +22,10 @@ def student(request):
 
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
+    student_admission_exam_list = StudentAdmissionExam.objects.filter(student=student)
     context ={
-        "student_id": student_id,
-        "student_name": " ".join([student.family_name, student.given_name])
+        "student_name": " ".join([student.family_name, student.given_name]),
+        "student_admission_exam_list": student_admission_exam_list,
     }
     return render(request, "admission_exam_db/student_detail.html", context)
 
