@@ -1,0 +1,13 @@
+{% extends 'admission_exam_db/base.html' %}
+{% block title %}生徒一覧{% endblock %}
+{% block content %}
+{% if student_list %}
+    <ul>
+        {% for student in student_list %}
+        <li><a href="{% url 'admission_exam_db:student_detail' student.student_id %}">{{ student.family_name }} {{student.given_name}}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No student data are available.</p>
+{% endif %}
+{% endblock %}

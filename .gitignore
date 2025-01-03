@@ -47,3 +47,22 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
+
+# added ignore files
+*.env
+*.sqlite3
+*.csv
+import_csv/
+
+# Djangoの設定
+*.log
+*.pot
+*.pyc
+__pycache__/
+
+# Djangoのマイグレーションファイル
+**/migrations/*
+
+# static file and media file
+/static/
+media/

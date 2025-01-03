@@ -1,0 +1,14 @@
+{% extends 'admission_exam_db/base.html' %}
+{% block title %}{{ student_name }}受験詳細{% endblock %}
+{% block content %}
+{% if student_admission_exam_list %}
+    <ul>
+        {% for admission_exam in student_admission_exam_list %}
+            <li>{{ admission_exam.university_faculty.display_name }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No admission exam data are available.</p>
+{% endif %}
+{% endblock %}
+

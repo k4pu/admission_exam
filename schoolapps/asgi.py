@@ -1,5 +1,5 @@
 """
-ASGI config for admission_exam_db project.
+ASGI config for schoolapps project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'admission_exam_db.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'schoolapps.settings')
 
 application = get_asgi_application()
