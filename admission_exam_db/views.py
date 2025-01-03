@@ -103,15 +103,16 @@ def upload_student(request):
 def create_student_admission_exam(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     if request.method == 'POST':
-        form = StudentAdmissionExamForm(request.POST)
+        form = StudentAdmissionExamForm(request.POST, student=student)# 生徒はすでに指定しているので、formで新たに入力する手間を省くためにstudentオブジェクトを渡す
         if form.is_valid():
             form.save()
             return redirect('admission_exam_db:student_detail', student_id=student_id)
     else:
-        form = StudentAdmissionExamForm()
-        context ={
-            'form': form,
-            'student_id': student.student_id,
-            'student_name': ' '.join([student.family_name, student.given_name]),
-        }
-        return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
+        form = StudentAdmissionExamForm(student=student)# studentオブジェクトを渡す
+
+    context ={
+        'form': form,
+        'student_id': student.student_id,
+        'student_name': ' '.join([student.family_name, student.given_name]),
+    }
+    return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
