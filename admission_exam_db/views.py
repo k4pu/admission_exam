@@ -1,6 +1,6 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm
+from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, StudentAdmissionExamForm
 
 from.models import Student, UniversityFaculty, StudentAdmissionExam
 
@@ -61,7 +61,7 @@ def upload_university_faculty(request):
                         'faculty_system_field_name': faculty_system_field_name,
                     }
                 )
-            return redirect('admission_exam_db/upload_university_faculty_success.html') # アップロード成功画面にリダイレクト
+            return redirect('admission_exam_db:upload_university_faculty_success') # アップロード成功画面にリダイレクト
     else:
         form = UniversityFacultyCSVUploadForm()
     return render(request, 'admission_exam_db/upload_university_faculty.html', {'form': form})
@@ -95,7 +95,23 @@ def upload_student(request):
                         'given_name_kana': given_name_kana,
                     }
                 )
-            return redirect('admission_exam_db/upload_student.html') # アップロード成功画面にリダイレクト
+            return redirect('admission_exam_db:upload_student') # アップロード成功画面にリダイレクト
     else:
         form = StudentCSVUploadForm()
     return render(request, 'admission_exam_db/upload_student.html', {'form': form})
+
+def create_student_admission_exam(request, student_id):
+    student = get_object_or_404(Student, student_id=student_id)
+    if request.method == 'POST':
+        form = StudentAdmissionExamForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admission_exam_db:student_detail', student_id=student_id)
+    else:
+        form = StudentAdmissionExamForm()
+        context ={
+            'form': form,
+            'student_id': student.student_id,
+            'student_name': ' '.join([student.family_name, student.given_name]),
+        }
+        return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
