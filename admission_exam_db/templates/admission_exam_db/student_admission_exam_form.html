@@ -1,9 +1,9 @@
 {% extends 'admission_exam_db/base.html' %}
 
-{% block title %}受験記録{% endblock %}
+{% block title %}{{ student_name }}受験記録{% endblock %}
 
 {% block content %}
-<h2>受験記録</h2>
+<h2>{{ student_name }}受験記録</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}

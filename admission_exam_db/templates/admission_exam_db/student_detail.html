@@ -10,5 +10,6 @@
 {% else %}
     <p>No admission exam data are available.</p>
 {% endif %}
+    <a href="{% url 'admission_exam_db:create_student_admission_exam' student_id=student_id %}">受験記録登録</a>
 {% endblock %}
 
