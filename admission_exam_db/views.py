@@ -95,7 +95,7 @@ def upload_student(request):
                         'given_name_kana': given_name_kana,
                     }
                 )
-            return redirect('admission_exam_db:upload_student') # アップロード成功画面にリダイレクト
+            return redirect('admission_exam_db:upload_student_success') # アップロード成功画面にリダイレクト
     else:
         form = StudentCSVUploadForm()
     return render(request, 'admission_exam_db/upload_student.html', {'form': form})
