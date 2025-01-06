@@ -3,13 +3,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device=width, initial-scale=1.0">
+    {% block head %}
+    <!-- 子テンプレートがここにヘッダ要素を挿入する -->
+    {% endblock %}
     <title>{% block title %}School Apps{% endblock %}</title>
 </head>
 <body>
     <!-- コンテンツ部分 -->
     <main>
         {% block content %}
-        子テンプレートがここにコンテンツを挿入する
+        <!-- 子テンプレートがここにコンテンツを挿入する -->
         {% endblock %}
     </main>
 </body>

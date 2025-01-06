@@ -1,5 +1,10 @@
 {% extends 'admission_exam_db/base.html' %}
 
+{% block head %}
+{% load static %}
+    <script src="{% static 'admission_exam_db/js/autocomplete.js' %}" defer></script>
+    <link rel="stylesheet" href="{% static 'admission_exam_db/css/style.css' %}" type="text/css">
+{% endblock %}
 {% block title %}{{ student_name }}受験記録{% endblock %}
 
 {% block content %}
@@ -9,5 +14,6 @@
     {{ form.as_p }}
     <button type="submit">保存</button>
 </form>
+<div id="autocomplete-results"></div><!-- オートコンプリート候補表示用 -->
 <a href="{% url 'admission_exam_db:student_detail' student_id=student_id %}">戻る</a>
 {% endblock %}

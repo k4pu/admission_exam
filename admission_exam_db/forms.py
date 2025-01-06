@@ -16,6 +16,13 @@ class StudentAdmissionExamForm(forms.ModelForm):
             'preference': '志望',
             'result': '結果',
         }
+        widgets = {
+            'university_faculty': forms.TextInput(attrs={
+                'id': 'university-faculty-autocomplete',
+                'autocomplete': 'off',
+                'placeholder': '大学・学部を入力',
+            })
+        }
 
     def __init__(self, *args, **kwargs):# インスタンス作成時の引数はここで受け取れば良いのか
         self.student = kwargs.pop('student', None)
