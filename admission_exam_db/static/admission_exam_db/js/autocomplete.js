@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 div.textContent = item.name;
                 div.classList.add('autocomplete-item');
                 div.addEventListener('click', () => {
-                    input.value = item.name; // 選択した候補をフィールドに設定
+                    input.value = item.id; // 選択した候補をフィールドに設定
                     resultsDiv.innerHTML = ''; // 候補をクリア
                 });
                 resultsDiv.appendChild(div);

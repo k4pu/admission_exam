@@ -4,6 +4,8 @@ from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, Student
 
 from.models import Student, UniversityFaculty, StudentAdmissionExam
 
+from django.db.models import Q
+
 import csv
 
 def index(request):
@@ -122,7 +124,7 @@ def university_faculty_autocomplete(request):
     query = request.GET.get('q', '') # クエリパラメータ 'q' を取得
     if query:
         faculties = UniversityFaculty.objects.filter(
-            display_name__icontains=query
+            Q(display_name__icontains=query) | Q(university_faculty_code__startswith=query)
         )[:50] # 部分一致
     else:
         faculties = UniversityFaculty.objects.none()

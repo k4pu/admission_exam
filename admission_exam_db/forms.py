@@ -12,7 +12,7 @@ class StudentAdmissionExamForm(forms.ModelForm):
         model = StudentAdmissionExam
         fields = ['university_faculty', 'preference', 'result']
         labels = {
-            'university_faculty': '大学・学部',
+            'university_faculty': '大学・学部コード',
             'preference': '志望',
             'result': '結果',
         }
@@ -20,7 +20,7 @@ class StudentAdmissionExamForm(forms.ModelForm):
             'university_faculty': forms.TextInput(attrs={
                 'id': 'university-faculty-autocomplete',
                 'autocomplete': 'off',
-                'placeholder': '大学・学部を入力',
+                'placeholder': '大学・学部名またはコードを入力',
             })
         }
 
