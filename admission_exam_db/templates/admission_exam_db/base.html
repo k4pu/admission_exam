@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device=width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admission_exam_db/css/style.css' %}" type="text/css">
     {% block head %}
     <!-- 子テンプレートがここにヘッダ要素を挿入する -->
     {% endblock %}
@@ -11,6 +13,13 @@
 <body>
     <!-- コンテンツ部分 -->
     <main>
+        <div class="topnav">
+          <a href="{% url 'admission_exam_db:index' %}">ホーム</a>
+          <a href="{% url 'admission_exam_db:login' %}">ログイン</a>
+          <a href="{% url 'admission_exam_db:student' %}">生徒リスト</a>
+          <a href="{% url 'admission_exam_db:upload_university_faculty' %}">大学学部アップロード</a>
+          <a href="{% url 'admission_exam_db:upload_student' %}">生徒アップロード</a>
+        </div>
         {% block content %}
         <!-- 子テンプレートがここにコンテンツを挿入する -->
         {% endblock %}
