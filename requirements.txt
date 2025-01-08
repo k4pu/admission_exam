@@ -2,3 +2,4 @@ Django>=4.0,<5.0
 psycopg[binary]>=3.2,<3.3
 django-debug-toolbar>=3.0 # Debug tool
 python-dotenv>=0.21 # .env読み込み用
+gunicorn>=23.0,<24.0
