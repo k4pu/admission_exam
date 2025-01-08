@@ -130,9 +130,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/app/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    # BASE_DIR / 'static',
     BASE_DIR / 'admission_exam_db/static/',
 ]  # 静的ファイルのディレクトリ
 STATIC_ROOT = '/app/static/'
