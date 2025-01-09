@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, StudentAdmissionExamForm
 
 from.models import Student, UniversityFaculty, StudentAdmissionExam
+
+from django.db.models import Q
 
 import csv
 
@@ -10,13 +12,16 @@ def index(request):
     return HttpResponse("Hello this is admission exam db app!")
 
 def login(request):
-    context = {}
+    context = {
+        'nbar': 'login',
+    }
     return render(request, "admission_exam_db/login.html", context)
 
 def student(request):
     student_list = Student.objects.order_by("student_id")
     context ={
-        "student_list": student_list,
+        'nbar': 'student',
+        'student_list': student_list,
     }
     return render(request, "admission_exam_db/student.html", context)
 
@@ -24,8 +29,10 @@ def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     student_admission_exam_list = StudentAdmissionExam.objects.filter(student=student)
     context ={
-        "student_name": " ".join([student.family_name, student.given_name]),
-        "student_admission_exam_list": student_admission_exam_list,
+        'nbar': 'student_detail',
+        'student_id': student_id,
+        'student_name': ' '.join([student.family_name, student.given_name]),
+        'student_admission_exam_list': student_admission_exam_list,
     }
     return render(request, "admission_exam_db/student_detail.html", context)
 
@@ -64,7 +71,11 @@ def upload_university_faculty(request):
             return redirect('admission_exam_db:upload_university_faculty_success') # アップロード成功画面にリダイレクト
     else:
         form = UniversityFacultyCSVUploadForm()
-    return render(request, 'admission_exam_db/upload_university_faculty.html', {'form': form})
+    context = {
+        'nbar': 'upload_university_faculty',
+        'form': form,
+    }
+    return render(request, 'admission_exam_db/upload_university_faculty.html', context)
 
 def upload_student(request):
     if request.method == "POST":
@@ -95,23 +106,41 @@ def upload_student(request):
                         'given_name_kana': given_name_kana,
                     }
                 )
-            return redirect('admission_exam_db:upload_student') # アップロード成功画面にリダイレクト
+            return redirect('admission_exam_db:upload_student_success') # アップロード成功画面にリダイレクト
     else:
         form = StudentCSVUploadForm()
-    return render(request, 'admission_exam_db/upload_student.html', {'form': form})
+    context = {
+        'nbar': 'upload_student',
+        'form': form,
+    }
+    return render(request, 'admission_exam_db/upload_student.html', context)
 
 def create_student_admission_exam(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     if request.method == 'POST':
-        form = StudentAdmissionExamForm(request.POST)
+        form = StudentAdmissionExamForm(request.POST, student=student)# 生徒はすでに指定しているので、formで新たに入力する手間を省くためにstudentオブジェクトを渡す
         if form.is_valid():
             form.save()
             return redirect('admission_exam_db:student_detail', student_id=student_id)
     else:
-        form = StudentAdmissionExamForm()
-        context ={
-            'form': form,
-            'student_id': student.student_id,
-            'student_name': ' '.join([student.family_name, student.given_name]),
-        }
-        return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
+        form = StudentAdmissionExamForm(student=student)# studentオブジェクトを渡す
+
+    context ={
+        'nbar': 'student',
+        'form': form,
+        'student_id': student.student_id,
+        'student_name': ' '.join([student.family_name, student.given_name]),
+    }
+    return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
+
+def university_faculty_autocomplete(request):
+    query = request.GET.get('q', '') # クエリパラメータ 'q' を取得
+    if query:
+        faculties = UniversityFaculty.objects.filter(
+            Q(display_name__icontains=query) | Q(university_faculty_code__startswith=query)
+        )[:50] # 部分一致
+    else:
+        faculties = UniversityFaculty.objects.none()
+
+    results = [{"id": faculty.university_faculty_code, "name": faculty.display_name} for faculty in faculties]
+    return JsonResponse(results, safe=False)

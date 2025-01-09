@@ -3,13 +3,25 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device=width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admission_exam_db/css/style.css' %}" type="text/css">
+    {% block head %}
+    <!-- 子テンプレートがここにヘッダ要素を挿入する -->
+    {% endblock %}
     <title>{% block title %}School Apps{% endblock %}</title>
 </head>
 <body>
     <!-- コンテンツ部分 -->
     <main>
+        <div class="topnav">
+            <a href="{% url 'admission_exam_db:index' %}" class="{% if nbar == 'home' %}active{% endif %}">ホーム</a>
+            <a href="{% url 'admission_exam_db:login' %}" class="{% if nbar == 'login' %}active{% endif %}">ログイン</a>
+            <a href="{% url 'admission_exam_db:student' %}" class="{% if nbar == 'student' %}active{% endif %}">生徒リスト</a>
+            <a href="{% url 'admission_exam_db:upload_university_faculty' %}" class="{% if nbar == 'upload_university_faculty' %}active{% endif %}">大学学部アップロード</a>
+            <a href="{% url 'admission_exam_db:upload_student' %}" class="{% if nbar == 'upload_student' %}active{% endif %}">生徒アップロード</a>
+        </div>
         {% block content %}
-        子テンプレートがここにコンテンツを挿入する
+        <!-- 子テンプレートがここにコンテンツを挿入する -->
         {% endblock %}
     </main>
 </body>

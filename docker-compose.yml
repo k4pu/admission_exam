@@ -14,13 +14,24 @@ services:
     build: .
     env_file:
       - .env
-    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    command: ["gunicorn", "schoolapps.wsgi:application", "-c", "gunicorn.conf.py"]
     volumes:
       - .:/app
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     depends_on:
       - db
+    networks:
+      - mynetwork
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - web
     networks:
       - mynetwork
 
