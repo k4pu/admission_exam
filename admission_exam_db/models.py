@@ -65,7 +65,9 @@ class StudentAdmissionExam(models.Model):
     ]
     preference = models.CharField( # 志望
         max_length=3,
-        choices=PREFERENCE_CHOICES
+        choices=PREFERENCE_CHOICES,
+        null=False,
+        blank=False
     )
     result = models.CharField(
         max_length=4,

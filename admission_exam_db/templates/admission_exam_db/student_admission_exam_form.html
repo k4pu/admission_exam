@@ -9,9 +9,19 @@
 {% block content %}
 <h2>{{ student_name }}受験記録</h2>
 <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">保存</button>
+{% csrf_token %}
+<div class="Form">
+    {% for field in form %}
+        <div class="Form-Item">
+            {% if field.field.required %}
+                <span class="Form-Item-Label-Required">必須</span>
+            {% endif %}
+            <label class="From-Item-Lable" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+        </div>
+    {% endfor %}
+</div>
+<button class="Form-Btn" type="submit">保存</button>
 </form>
 <div id="autocomplete-results"></div><!-- オートコンプリート候補表示用 -->
 <a href="{% url 'admission_exam_db:student_detail' student_id=student_id %}">戻る</a>

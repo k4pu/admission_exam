@@ -19,9 +19,16 @@ class StudentAdmissionExamForm(forms.ModelForm):
         widgets = {
             'university_faculty': forms.TextInput(attrs={
                 'id': 'university-faculty-autocomplete',
+                'class': 'Form-Item-Input',
                 'autocomplete': 'off',
                 'placeholder': '大学・学部名またはコードを入力',
-            })
+            }),
+            'preference': forms.Select(attrs={
+                'class': 'Form-Item-Choice',
+            }),
+            'result': forms.Select(attrs={
+                'class': 'Form-Item-Choice',
+            }),
         }
 
     def __init__(self, *args, **kwargs):# インスタンス作成時の引数はここで受け取れば良いのか
