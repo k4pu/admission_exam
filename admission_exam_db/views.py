@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
-from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, StudentAdmissionExamForm
+from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, UserCSVUploadForm, StudentAdmissionExamForm
 
-from.models import Student, UniversityFaculty, StudentAdmissionExam
+from .models import Student, UniversityFaculty, StudentAdmissionExam
+from django.contrib.auth.models import User
 
 from django.db.models import Q
 
@@ -10,12 +11,6 @@ import csv
 
 def index(request):
     return HttpResponse("Hello this is admission exam db app!")
-
-def login(request):
-    context = {
-        'nbar': 'login',
-    }
-    return render(request, "admission_exam_db/login.html", context)
 
 def student(request):
     student_list = Student.objects.order_by("student_id")
@@ -114,6 +109,36 @@ def upload_student(request):
         'form': form,
     }
     return render(request, 'admission_exam_db/upload_student.html', context)
+
+def upload_user(request):
+    if request.method == "POST":
+        form = UserCSVUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            csv_file = request.FILES['csv_file']
+            decoded_file = csv_file.read().decode('utf-8-sig').splitlines()
+            reader = csv.DictReader(decoded_file)
+            for row in reader:
+                username = row['username']
+                password = row['password']
+                email = row['email']
+
+                # データモデルに保存
+                User.objects.update_or_create(
+                    username=username,
+                    defaults={
+                        'password': password,
+                        'email': email,
+                    }
+                )
+            return redirect('admission_exam_db:upload_user_success') # アップロード成功画面にリダイレクト
+    else:
+        form = UserCSVUploadForm()
+    context = {
+        'nbar': 'upload_user',
+        'form': form,
+    }
+    return render(request, 'admission_exam_db/upload_user.html', context)
+
 
 def create_student_admission_exam(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)

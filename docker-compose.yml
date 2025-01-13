@@ -15,10 +15,11 @@ services:
     env_file:
       - .env
     command: ["gunicorn", "schoolapps.wsgi:application", "-c", "gunicorn.conf.py"]
+    # command: ["python", "manage.py", "runserver", "0.0.0.0:8000"] # debug用
     volumes:
       - .:/app
-    # ports:
-    #   - "8000:8000"
+    # ports: # debug用
+    #   - "8000:8000" # debug用
     depends_on:
       - db
     networks:

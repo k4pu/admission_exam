@@ -7,6 +7,9 @@ class UniversityFacultyCSVUploadForm(forms.Form):
 class StudentCSVUploadForm(forms.Form):
     csv_file = forms.FileField(label='CSVファイルを選択')
 
+class UserCSVUploadForm(forms.Form):
+    csv_file = forms.FileField(label='CSVファイルを選択')
+
 class StudentAdmissionExamForm(forms.ModelForm):
     class Meta:
         model = StudentAdmissionExam
