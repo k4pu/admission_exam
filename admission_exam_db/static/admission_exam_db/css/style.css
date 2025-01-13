@@ -14,6 +14,18 @@
   font-size: 17px;
 }
 
+h2 {
+  margin-top: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 720px;
+}
+@media screen and (max-width: 480px) {
+  h2 {
+    margin-top: 60px;
+  }
+}
+
 /* Form用 */
 .Form {
   margin-top: 80px;
@@ -195,11 +207,9 @@
 }
 
 #autocomplete-results {
-    border: 1px solid #ccc;
-    background: white;
+    background: #eee;
     max-height: 200px;
     overflow-y: auto;
-    position: absolute;
     z-index: 1000;
     width: 100%;
 }
@@ -213,3 +223,20 @@
     background-color: #f0f0f0;
 }
 
+.Page-Btn {
+    display: inline-block;
+    padding: 20px 30px;
+    text-decoration: none;
+    color: #5bc8ac;
+    border: dashed 1px #5bc8ac;
+    margin-top: 50px;
+    margin-left: 50px;
+    font-size: 20px;
+    border-radius: 3px;
+    transition: .4s;
+}
+
+.Page-Btn:hover {
+    border-style: dotted;
+    color: #5bc8ac;
+}
