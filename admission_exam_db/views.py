@@ -4,15 +4,18 @@ from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, UserCSV
 
 from .models import Student, UniversityFaculty, StudentAdmissionExam
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from django.db.models import Q
 
 import csv
 
+@login_required
 def index(request):
     return HttpResponse("Hello this is admission exam db app!")
 
+@login_required
 def student(request):
     student_list = Student.objects.order_by("student_id")
     context ={
@@ -21,6 +24,7 @@ def student(request):
     }
     return render(request, "admission_exam_db/student.html", context)
 
+@login_required
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     student_admission_exam_list = StudentAdmissionExam.objects.filter(student=student)
@@ -32,6 +36,7 @@ def student_detail(request, student_id):
     }
     return render(request, "admission_exam_db/student_detail.html", context)
 
+@login_required
 def upload_university_faculty(request):
     if request.method == "POST":
         form = UniversityFacultyCSVUploadForm(request.POST, request.FILES)
@@ -73,6 +78,7 @@ def upload_university_faculty(request):
     }
     return render(request, 'admission_exam_db/upload_university_faculty.html', context)
 
+@login_required
 def upload_student(request):
     if request.method == "POST":
         form = StudentCSVUploadForm(request.POST, request.FILES)
@@ -111,6 +117,7 @@ def upload_student(request):
     }
     return render(request, 'admission_exam_db/upload_student.html', context)
 
+@login_required
 def upload_user(request):
     if request.method == "POST":
         form = UserCSVUploadForm(request.POST, request.FILES)
@@ -163,6 +170,7 @@ def upload_user(request):
     return render(request, 'admission_exam_db/upload_user.html', context)
 
 
+@login_required
 def create_student_admission_exam(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     if request.method == 'POST':
@@ -181,6 +189,7 @@ def create_student_admission_exam(request, student_id):
     }
     return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
 
+@login_required
 def university_faculty_autocomplete(request):
     query = request.GET.get('q', '') # クエリパラメータ 'q' を取得
     if query:

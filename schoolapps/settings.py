@@ -143,3 +143,4 @@ STATIC_ROOT = '/app/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/admission_exam_db/'
+LOGIN_URL = '/admission_exam_db/accounts/login/'
