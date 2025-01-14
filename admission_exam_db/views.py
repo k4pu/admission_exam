@@ -4,6 +4,7 @@ from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, UserCSV
 
 from .models import Student, UniversityFaculty, StudentAdmissionExam
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 from django.db.models import Q
 
@@ -115,22 +116,44 @@ def upload_user(request):
         form = UserCSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
             csv_file = request.FILES['csv_file']
-            decoded_file = csv_file.read().decode('utf-8-sig').splitlines()
-            reader = csv.DictReader(decoded_file)
-            for row in reader:
-                username = row['username']
-                password = row['password']
-                email = row['email']
+            try:
+                decoded_file = csv_file.read().decode('utf-8-sig').splitlines()
+                reader = csv.DictReader(decoded_file)
 
-                # データモデルに保存
-                User.objects.update_or_create(
-                    username=username,
-                    defaults={
-                        'password': password,
-                        'email': email,
-                    }
-                )
-            return redirect('admission_exam_db:upload_user_success') # アップロード成功画面にリダイレクト
+                success_count = 0
+                error_count = 0
+
+                for row in reader:
+                    try:
+                        username = row['username']
+                        password = row['password']
+                        email = row['email']
+
+                        # データモデルに保存
+                        user, created = User.objects.update_or_create(
+                            username=username,
+                            defaults={
+                                'email': email,
+                            }
+                        )
+                        if created or not user.check_password(password):# 新規作成またはパスワードが変更された場合
+                            user.set_password(password)
+                            user.save()
+
+                        success_count += 1
+                    except KeyError as e:
+                        # 必須フィールドが不足している場合
+                        error_count += 1
+                        messages.error(request, f"CSVに必須フィールドが不足しています： {e}")
+                    except Exception as e:
+                        # その他のエラー
+                        error_count += 1
+                        messages.error(request, f"エラーが発生しました： {e}")
+
+                messages.success(request, f"アップロード完了： {success_count}件成功, {error_count}件失敗")
+                return redirect('admission_exam_db:upload_user_success') # アップロード成功画面にリダイレクト
+            except UnicodeDecodeError:
+                messages.error(request, "ファイルのエンコーディングエラーです。UTF-8で保存されたCSVを使用してください。")
     else:
         form = UserCSVUploadForm()
     context = {
