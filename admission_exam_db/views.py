@@ -201,3 +201,7 @@ def university_faculty_autocomplete(request):
 
     results = [{"id": faculty.university_faculty_code, "name": faculty.display_name} for faculty in faculties]
     return JsonResponse(results, safe=False)
+
+def user(request):
+    context = {}
+    return render(request, 'admission_exam_db/user.html', context)

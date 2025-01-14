@@ -15,10 +15,14 @@
     <main>
         <div class="topnav">
             <a href="{% url 'admission_exam_db:index' %}" class="{% if nbar == 'home' %}active{% endif %}">ホーム</a>
-            <a href="{% url 'admission_exam_db:login' %}" class="{% if nbar == 'login' %}active{% endif %}">ログイン</a>
             <a href="{% url 'admission_exam_db:student' %}" class="{% if nbar == 'student' %}active{% endif %}">生徒リスト</a>
             <a href="{% url 'admission_exam_db:upload_university_faculty' %}" class="{% if nbar == 'upload_university_faculty' %}active{% endif %}">大学学部アップロード</a>
             <a href="{% url 'admission_exam_db:upload_student' %}" class="{% if nbar == 'upload_student' %}active{% endif %}">生徒アップロード</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'admission_exam_db:user' %}">{{ user.username }}</a>
+            {% else %}
+                <a href="{% url 'admission_exam_db:login' %}" class="{% if nbar == 'login' %}active{% endif %}">ログイン</a>
+            {% endif %}
         </div>
         {% block content %}
         <!-- 子テンプレートがここにコンテンツを挿入する -->
