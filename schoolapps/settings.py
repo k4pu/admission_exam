@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-cezhqfin#w(qljrm6*=7d66q$%9#4dj*96(t=vk_&w=98kqj_4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     os.getenv('HOST_PRIVATE_IP'),
@@ -130,12 +130,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 
-STATIC_URL = '/app/static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    # BASE_DIR / 'static',
     BASE_DIR / 'admission_exam_db/static/',
 ]  # 静的ファイルのディレクトリ
-STATIC_ROOT = '/app/static/'
+STATIC_ROOT = '/app/staticfiles/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
