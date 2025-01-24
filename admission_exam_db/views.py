@@ -228,8 +228,8 @@ def university_faculty_autocomplete(request):
     query = request.GET.get('q', '') # クエリパラメータ 'q' を取得
     if query:
         faculties = UniversityFaculty.objects.filter(
-            Q(display_name__icontains=query) | Q(university_faculty_code__startswith=query)
-        )[:50] # 部分一致
+            Q(display_name__startswith=query) | Q(university_faculty_code__startswith=query)
+        )[:50] # 先頭一致
     else:
         faculties = UniversityFaculty.objects.none()
     results = [{"id": faculty.university_faculty_code, "name": faculty.display_name} for faculty in faculties]
