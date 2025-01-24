@@ -192,7 +192,7 @@ def create_student_admission_exam(request, student_id):
 @login_required
 def edit_student_admission_exam(request, student_id, student_admission_exam_id):
     student = get_object_or_404(Student, student_id=student_id)
-    admission_exam = get_object_or_404(StudentAdmissionExam,id=student_admission_exam_id, student=student)
+    admission_exam = get_object_or_404(StudentAdmissionExam, id=student_admission_exam_id, student=student)
 
     if request.method == 'POST':
         form = StudentAdmissionExamForm(request.POST, instance=admission_exam)
@@ -207,9 +207,21 @@ def edit_student_admission_exam(request, student_id, student_admission_exam_id):
         'nbar': 'student',
         'form': form,
         'student_id': student_id,
+        'student_admission_exam_id': student_admission_exam_id,
         'student_name': ' '.join([student.family_name, student.given_name]),
     }
     return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
+
+def delete_student_admission_exam(request, student_id, student_admission_exam_id):
+    student = get_object_or_404(Student, student_id=student_id)
+    admission_exam = get_object_or_404(StudentAdmissionExam, id=student_admission_exam_id, student=student)
+
+    # 削除処理
+    admission_exam.delete()
+    messages.success(request, "受験データ削除に成功しました")
+
+    return redirect('admission_exam_db:student_detail', student_id=student_id)
+
 
 @login_required
 def university_faculty_autocomplete(request):
@@ -220,7 +232,6 @@ def university_faculty_autocomplete(request):
         )[:50] # 部分一致
     else:
         faculties = UniversityFaculty.objects.none()
-
     results = [{"id": faculty.university_faculty_code, "name": faculty.display_name} for faculty in faculties]
     return JsonResponse(results, safe=False)
 

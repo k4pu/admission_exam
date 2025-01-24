@@ -26,5 +26,11 @@
 </div>
 <button class="Form-Btn" type="submit">保存</button>
 </form>
+{% if student_admission_exam_id %}
+    <form action={% url 'admission_exam_db:delete_student_admission_exam' student_id=student_id student_admission_exam_id=student_admission_exam_id %} method="post">
+        {% csrf_token %}
+        <button class="Form-Alert-Btn" type="submit" onclick="受験データを削除しますか？">削除</button>
+    </form>
+{% endif %}
 <a href="{% url 'admission_exam_db:student_detail' student_id=student_id %}" class="Page-Btn">戻る</a>
 {% endblock %}
