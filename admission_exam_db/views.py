@@ -184,7 +184,29 @@ def create_student_admission_exam(request, student_id):
     context ={
         'nbar': 'student',
         'form': form,
-        'student_id': student.student_id,
+        'student_id': student_id,
+        'student_name': ' '.join([student.family_name, student.given_name]),
+    }
+    return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
+
+@login_required
+def edit_student_admission_exam(request, student_id, student_admission_exam_id):
+    student = get_object_or_404(Student, student_id=student_id)
+    admission_exam = get_object_or_404(StudentAdmissionExam,id=student_admission_exam_id, student=student)
+
+    if request.method == 'POST':
+        form = StudentAdmissionExamForm(request.POST, instance=admission_exam)
+        if form.is_valid():
+            form.save()
+            return redirect('admission_exam_db:student_detail', student_id=student_id)
+
+    else:
+        form = StudentAdmissionExamForm(instance=admission_exam)
+
+    context = {
+        'nbar': 'student',
+        'form': form,
+        'student_id': student_id,
         'student_name': ' '.join([student.family_name, student.given_name]),
     }
     return render(request, 'admission_exam_db/student_admission_exam_form.html', context)

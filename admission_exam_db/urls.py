@@ -13,5 +13,6 @@ urlpatterns = [
     path("upload_student", views.upload_student, name="upload_student"),
     path("upload_user", views.upload_user, name="upload_user"),
     path("student/<int:student_id>/create_student_admission_exam", views.create_student_admission_exam, name="create_student_admission_exam"),
+    path("student/<int:student_id>/<int:student_admission_exam_id>", views.edit_student_admission_exam, name="edit_student_admission_exam"),
     path("api/university_faculty", views.university_faculty_autocomplete, name="university_faculty_autocomplete"),
 ]
