@@ -1,0 +1,16 @@
+{% extends 'admission_exam_db/base.html' %}
+{% block title %}受験DB ホーム{% endblock %}
+{% block content %}
+    <main>
+        <section>
+            <h1>メニュー</h1>
+            <ul>
+                <li><a href="{% url 'admission_exam_db:student' %}">生徒リスト</a></li>
+                <li><a href="{% url 'admission_exam_db:admission_exam' %}">受験リスト</a></li>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 受験DB</p>
+    </footer>
+{% endblock %}

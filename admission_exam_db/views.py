@@ -13,7 +13,8 @@ import csv
 
 @login_required
 def index(request):
-    return HttpResponse("Hello this is admission exam db app!")
+    context = {}
+    return render(request, "admission_exam_db/index.html", context)
 
 @login_required
 def student(request):
