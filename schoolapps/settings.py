@@ -144,6 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/admission_exam_db/'
 LOGIN_URL = '/admission_exam_db/accounts/login/'
+LOGOUT_REDIRECT_URL = LOGIN_REDIRECT_URL
 
 # DebugToolbar用
 if DEBUG:
