@@ -25,6 +25,15 @@ def student(request):
     return render(request, "admission_exam_db/student.html", context)
 
 @login_required
+def admission_exam(request):
+    admission_exam_list = StudentAdmissionExam.objects.order_by("id")
+    context ={
+        'nbar': 'admission_exam',
+        'admission_exam_list': admission_exam_list,
+    }
+    return render(request, "admission_exam_db/admission_exam.html", context)
+
+@login_required
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     student_admission_exam_list = StudentAdmissionExam.objects.filter(student=student)
