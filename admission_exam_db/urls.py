@@ -12,6 +12,7 @@ urlpatterns = [
     path("upload_university_faculty", views.upload_university_faculty, name="upload_university_faculty"),
     path("upload_student", views.upload_student, name="upload_student"),
     path("upload_user", views.upload_user, name="upload_user"),
+    path("upload_success", views.upload_success, name="upload_success"),
     path("student/<int:student_id>/create_student_admission_exam", views.create_student_admission_exam, name="create_student_admission_exam"),
     path("student/<int:student_id>/<int:student_admission_exam_id>", views.edit_student_admission_exam, name="edit_student_admission_exam"),
     path("student/<int:student_id>/<int:student_admission_exam_id>/delete", views.delete_student_admission_exam, name="delete_student_admission_exam"),

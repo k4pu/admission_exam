@@ -4,12 +4,15 @@ from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, UserCSV
 
 from .models import Student, UniversityFaculty, StudentAdmissionExam
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 
 from django.db.models import Q
 
 import csv
+
+def is_admin(user):
+    return user.is_superuser
 
 @login_required
 def index(request):
@@ -47,6 +50,7 @@ def student_detail(request, student_id):
     return render(request, "admission_exam_db/student_detail.html", context)
 
 @login_required
+@user_passes_test(is_admin)
 def upload_university_faculty(request):
     if request.method == "POST":
         form = UniversityFacultyCSVUploadForm(request.POST, request.FILES)
@@ -79,7 +83,7 @@ def upload_university_faculty(request):
                         'faculty_system_field_name': faculty_system_field_name,
                     }
                 )
-            return redirect('admission_exam_db:upload_university_faculty_success') # アップロード成功画面にリダイレクト
+            return redirect('admission_exam_db:upload_success') # アップロード成功画面にリダイレクト
     else:
         form = UniversityFacultyCSVUploadForm()
     context = {
@@ -89,6 +93,7 @@ def upload_university_faculty(request):
     return render(request, 'admission_exam_db/upload_university_faculty.html', context)
 
 @login_required
+@user_passes_test(is_admin)
 def upload_student(request):
     if request.method == "POST":
         form = StudentCSVUploadForm(request.POST, request.FILES)
@@ -118,7 +123,7 @@ def upload_student(request):
                         'given_name_kana': given_name_kana,
                     }
                 )
-            return redirect('admission_exam_db:upload_student_success') # アップロード成功画面にリダイレクト
+            return redirect('admission_exam_db:upload_success') # アップロード成功画面にリダイレクト
     else:
         form = StudentCSVUploadForm()
     context = {
@@ -128,6 +133,7 @@ def upload_student(request):
     return render(request, 'admission_exam_db/upload_student.html', context)
 
 @login_required
+@user_passes_test(is_admin)
 def upload_user(request):
     if request.method == "POST":
         form = UserCSVUploadForm(request.POST, request.FILES)
@@ -168,7 +174,7 @@ def upload_user(request):
                         messages.error(request, f"エラーが発生しました： {e}")
 
                 messages.success(request, f"アップロード完了： {success_count}件成功, {error_count}件失敗")
-                return redirect('admission_exam_db:upload_user_success') # アップロード成功画面にリダイレクト
+                return redirect('admission_exam_db:upload_success') # アップロード成功画面にリダイレクト
             except UnicodeDecodeError:
                 messages.error(request, "ファイルのエンコーディングエラーです。UTF-8で保存されたCSVを使用してください。")
     else:
@@ -179,6 +185,9 @@ def upload_user(request):
     }
     return render(request, 'admission_exam_db/upload_user.html', context)
 
+def upload_success(request):
+    context = {}
+    return render(request, 'admission_exam_db/upload_success.html', context)
 
 @login_required
 def create_student_admission_exam(request, student_id):
