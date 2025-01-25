@@ -21,7 +21,7 @@ def index(request):
 
 @login_required
 def student(request):
-    student_list = Student.objects.order_by("student_id")
+    student_list = Student.objects.order_by("homeroom_class", "attendance_number")
     context ={
         'nbar': 'student',
         'student_list': student_list,
@@ -30,7 +30,7 @@ def student(request):
 
 @login_required
 def admission_exam(request):
-    admission_exam_list = StudentAdmissionExam.objects.order_by("id")
+    admission_exam_list = StudentAdmissionExam.objects.order_by("university_faculty_id")
     context ={
         'nbar': 'admission_exam',
         'admission_exam_list': admission_exam_list,
