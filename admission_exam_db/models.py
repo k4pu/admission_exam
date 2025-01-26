@@ -81,17 +81,19 @@ class StudentAdmissionExam(models.Model):
     def __str__(self):
         return " ".join([self.student.family_name, self.student.given_name]) + ": " + self.university_faculty.display_name
 
-    def save(self, *args, **kwargs):
+    def save(self, user=None, *args, **kwargs):
         is_new = self.pk is None  # 既存のデータであればpkが存在
 
         super().save(*args, **kwargs)
 
         if is_new:
-            logger.info(f"Created New Object: {self}, New Object ID Assigned: {self.pk}")
+            logger.info(f"Created New Object: {self}, New Object ID Assigned: {self.pk}, Created By User ID: {user.id if user else 'Anonymous'}")
         else:
-            logger.info(f"Updated Object: {self}, Object ID: {self.pk}")
-
-    def delete(self, *args, **kwargs):
-        # ログに記録
-        logger.info(f"Deleted Object: {self}, Object ID: {self.id}")
+            logger.info(f"Updated Object: {self}, Object ID: {self.pk}, Updated By User ID: {user.id if user else 'Anonymous'}")
+    def delete(self, user=None, *args, **kwargs):
+        object_id = self.pk
         super().delete(*args, **kwargs)
+
+        # ログに記録
+        logger.info(f"Deleted Object: {self.__class__.__name__}, Object ID: {object_id}, Deleted By User ID: {user.id if user else 'Anonymous'}")
+

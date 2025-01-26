@@ -38,7 +38,7 @@ class StudentAdmissionExamForm(forms.ModelForm):
         self.student = kwargs.pop('student', None)
         super().__init__(*args, **kwargs)
 
-    def save(self, commit=True):
+    def save(self, commit=True, user=None):
         instance = super().save(commit=False)# 一旦親クラスのsaveメソッドでStudentAdmissionModelインスタンスを作成する. この時点でデータベースに反映はされない
         if self.student:
             instance.student = self.student # Noneの場合もあるが、そうでなければinstanceにstudentを代入する
@@ -47,5 +47,5 @@ class StudentAdmissionExamForm(forms.ModelForm):
             instance.university_faculty_id = university_faculty_id
 
         if commit:
-            instance.save()# save()はdefaultでcommit=Trueなのでここでデータベースに保存される
+            instance.save(user=user)# save()はdefaultでcommit=Trueなのでここでデータベースに保存される
         return instance# 親クラスもinstanceを返すし, この方が良さそうではあるが使い道はまだわからない
