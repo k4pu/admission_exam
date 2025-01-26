@@ -42,6 +42,10 @@ class StudentAdmissionExamForm(forms.ModelForm):
         instance = super().save(commit=False)# 一旦親クラスのsaveメソッドでStudentAdmissionModelインスタンスを作成する. この時点でデータベースに反映はされない
         if self.student:
             instance.student = self.student # Noneの場合もあるが、そうでなければinstanceにstudentを代入する
+        university_faculty_id = self.data.get('university_faculty_id')
+        if university_faculty_id:
+            instance.university_faculty_id = university_faculty_id
+
         if commit:
             instance.save()# save()はdefaultでcommit=Trueなのでここでデータベースに保存される
         return instance# 親クラスもinstanceを返すし, この方が良さそうではあるが使い道はまだわからない

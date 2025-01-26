@@ -21,6 +21,8 @@
         </div>
         {% if field.name == 'university_faculty' %}
             <div id="autocomplete-results"></div><!-- オートコンプリート候補表示用 -->
+            <input type="hidden" id="selected-university-hidden" name="university_faculty_id">
+            <p>選択中: <span id="selected-university"></span></p>
         {% endif %}
     {% endfor %}
 </div>

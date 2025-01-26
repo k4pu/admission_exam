@@ -2,6 +2,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('university-faculty-autocomplete');
     const resultsDiv = document.getElementById('autocomplete-results');
+    const hiddenInput = document.getElementById('selected-university-hidden');
+    const selectedUniversity = document.getElementById('selected-university'); // 選択中の大学を表示
 
     input.addEventListener('input', async () => {
         const query = input.value;
@@ -16,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 div.classList.add('autocomplete-item');
                 div.addEventListener('click', () => {
                     input.value = item.id; // 選択した候補をフィールドに設定
+                    hiddenInput.value = item.id;
+                    selectedUniversity.textContent = item.name;
                     resultsDiv.innerHTML = ''; // 候補をクリア
                 });
                 resultsDiv.appendChild(div);
