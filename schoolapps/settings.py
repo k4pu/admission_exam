@@ -146,6 +146,34 @@ LOGIN_REDIRECT_URL = '/admission_exam_db/'
 LOGIN_URL = '/admission_exam_db/accounts/login/'
 LOGOUT_REDIRECT_URL = LOGIN_REDIRECT_URL
 
+# Logging 設定
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'form_submissions.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+
 # DebugToolbar用
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']

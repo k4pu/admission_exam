@@ -10,6 +10,9 @@ from django.contrib import messages
 from django.db.models import Q
 
 import csv
+import logging
+
+logger = logging.getLogger('django')
 
 def is_admin(user):
     return user.is_superuser
@@ -195,6 +198,11 @@ def create_student_admission_exam(request, student_id):
     if request.method == 'POST':
         form = StudentAdmissionExamForm(request.POST, student=student)# 生徒はすでに指定しているので、formで新たに入力する手間を省くためにstudentオブジェクトを渡す
         if form.is_valid():
+
+            # ログに記録
+            user_id = request.user.id
+            logger.info(f"User ID: {user_id}, Create Object.")
+
             form.save()
             return redirect('admission_exam_db:student_detail', student_id=student_id)
     else:
@@ -216,6 +224,11 @@ def edit_student_admission_exam(request, student_id, student_admission_exam_id):
     if request.method == 'POST':
         form = StudentAdmissionExamForm(request.POST, instance=admission_exam)
         if form.is_valid():
+
+            # ログに記録
+            user_id = request.user.id
+            logger.info(f"User ID: {user_id}, Update Object.")
+
             form.save()
             return redirect('admission_exam_db:student_detail', student_id=student_id)
 
@@ -234,6 +247,10 @@ def edit_student_admission_exam(request, student_id, student_admission_exam_id):
 def delete_student_admission_exam(request, student_id, student_admission_exam_id):
     student = get_object_or_404(Student, student_id=student_id)
     admission_exam = get_object_or_404(StudentAdmissionExam, id=student_admission_exam_id, student=student)
+
+    # ログに記録
+    user_id = request.user.id
+    logger.info(f"User ID: {user_id}, Deleted Object.")
 
     # 削除処理
     admission_exam.delete()
