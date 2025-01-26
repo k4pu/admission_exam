@@ -4,15 +4,35 @@
 {% load static %}
     <script src="{% static 'admission_exam_db/js/autocomplete.js' %}" defer></script>
 {% endblock %}
-{% block title %}{{ student_name }}受験記録{% endblock %}
+{% block title %}{{ student_name }}：受験記録{% endblock %}
 
 {% block content %}
-<h2>{{ student_name }}受験記録</h2>
+<h2>{{ student_name }}：受験記録</h2>
 <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">保存</button>
+{% csrf_token %}
+<div class="Form">
+    {% for field in form %}
+        <div class="Form-Item">
+            {% if field.field.required %}
+                <span class="Form-Item-Label-Required">必須</span>
+            {% endif %}
+            <label class="From-Item-Lable" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% if field.name == 'university_faculty' %}
+            <div id="autocomplete-results"></div><!-- オートコンプリート候補表示用 -->
+            <input type="hidden" id="selected-university-hidden" name="university_faculty_id">
+            <p>選択中: <span id="selected-university"></span></p>
+        {% endif %}
+    {% endfor %}
+</div>
+<button class="Form-Btn" type="submit">保存</button>
 </form>
-<div id="autocomplete-results"></div><!-- オートコンプリート候補表示用 -->
-<a href="{% url 'admission_exam_db:student_detail' student_id=student_id %}">戻る</a>
+{% if student_admission_exam_id %}
+    <form action={% url 'admission_exam_db:delete_student_admission_exam' student_id=student_id student_admission_exam_id=student_admission_exam_id %} method="post">
+        {% csrf_token %}
+        <button class="Form-Alert-Btn" type="submit" onclick="return confirm('受験データを削除しますか？');">削除</button>
+    </form>
+{% endif %}
+<a href="{% url 'admission_exam_db:student_detail' student_id=student_id %}" class="Page-Btn">戻る</a>
 {% endblock %}

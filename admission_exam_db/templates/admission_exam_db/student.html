@@ -2,11 +2,27 @@
 {% block title %}生徒一覧{% endblock %}
 {% block content %}
 {% if student_list %}
-    <ul>
-        {% for student in student_list %}
-        <li><a href="{% url 'admission_exam_db:student_detail' student.student_id %}">{{ student.family_name }} {{student.given_name}}</a></li>
-        {% endfor %}
-    </ul>
+    <input type="text" id="student-name-filterInput" placeholder="検索" class="filterInput">
+    <table class="student-table">
+        <thead>
+            <tr>
+                <th>組</th>
+                <th>番</th>
+                <th>氏名</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in student_list %}
+            <tr>
+                <td>{{ student.homeroom_class}}</td>
+                <td>{{ student.attendance_number}}</td>
+                <td><a href="{% url 'admission_exam_db:student_detail' student.student_id %}">{{ student.family_name }} {{student.given_name}}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% load static %}
+    <script src="{% static 'admission_exam_db/js/student_filter.js' %}" defer></script>
 {% else %}
     <p>No student data are available.</p>
 {% endif %}

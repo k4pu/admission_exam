@@ -1,0 +1,30 @@
+{% extends 'admission_exam_db/base.html' %}
+{% block title %}受験一覧{% endblock %}
+{% block content %}
+{% if admission_exam_list %}
+    <input type="text" id="admission-exam-filterInput" placeholder="検索" class="filterInput">
+    <table class="admission-exam-table">
+        <thead>
+            <tr>
+                <th>大学</th>
+                <th>学部</th>
+                <th>氏名</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for admission_exam in admission_exam_list %}
+            <tr>
+                <td><a href="{% url 'admission_exam_db:edit_student_admission_exam' student_id=admission_exam.student.student_id student_admission_exam_id=admission_exam.id %}">{{ admission_exam.university_faculty.university_name}}</a></td>
+                <td>{{ admission_exam.university_faculty.faculty_name}}</td>
+                <td>{{ admission_exam.student.family_name }} {{ admission_exam.student.given_name}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% load static %}
+    <script src="{% static 'admission_exam_db/js/admission_exam_filter.js' %}" defer></script>
+{% else %}
+    <p>No admission_exam data are available.</p>
+{% endif %}
+{% endblock %}
+

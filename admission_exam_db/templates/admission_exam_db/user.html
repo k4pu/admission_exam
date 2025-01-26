@@ -1,0 +1,7 @@
+{% extends 'admission_exam_db/base.html' %}
+{% block title %}{{ user.username }}{% endblock %}
+{% block content %}
+<p>{{user.username}}のページです</p>
+<a href="{% url 'admission_exam_db:logout' %}">ログアウト</a>
+{% endblock %}
+

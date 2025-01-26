@@ -1,0 +1,17 @@
+{% extends 'admission_exam_db/base.html' %}
+{% block title %}ユーザ情報をCSVでアップロード{% endblock %}
+{% block content %}
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">アップロード</button>
+</form>
+{% endblock %}
+

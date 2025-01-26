@@ -65,4 +65,5 @@ __pycache__/
 
 # static file and media file
 /static/
+/staticfiles/
 media/

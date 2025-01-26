@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -130,14 +131,59 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 
-STATIC_URL = '/app/static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    # BASE_DIR / 'static',
     BASE_DIR / 'admission_exam_db/static/',
 ]  # 静的ファイルのディレクトリ
-STATIC_ROOT = '/app/static/'
+STATIC_ROOT = '/app/staticfiles/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = '/admission_exam_db/'
+LOGIN_URL = '/admission_exam_db/accounts/login/'
+LOGOUT_REDIRECT_URL = LOGIN_REDIRECT_URL
+
+# Logging 設定
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'form_submissions.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+
+# DebugToolbar用
+if DEBUG:
+    INSTALLED_APPS += ['debug_toolbar']
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+INTERNAL_IPS = [
+    '127.0.0.1',
+    '172.18.0.1',
+]
+DEBUG_TOOLBAR_CONFIG = {
+    # ツールバーを表示させる
+    "SHOW_TOOLBAR_CALLBACK" : lambda request: True,
+    "INTERCEPT_REDIREDTS": False,
+}
