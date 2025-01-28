@@ -12,7 +12,7 @@
 </head>
 <body>
     <!-- コンテンツ部分 -->
-    <main>
+    <header>
         <div class="topnav">
             <a href="{% url 'admission_exam_db:index' %}" class="{% if nbar == 'home' %}active{% endif %}">ホーム</a>
             <a href="{% url 'admission_exam_db:student' %}" class="{% if nbar == 'student' %}active{% endif %}">生徒リスト</a>
@@ -28,6 +28,8 @@
                 <a href="{% url 'admission_exam_db:login' %}" class="{% if nbar == 'login' %}active{% endif %}">ログイン</a>
             {% endif %}
         </div>
+    </header>
+    <main>
         {% block content %}
         <!-- 子テンプレートがここにコンテンツを挿入する -->
         {% endblock %}

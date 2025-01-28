@@ -12,6 +12,7 @@
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">アップロード</button>
+    <a href="{% url 'admission_exam_db:download_template_csv' file_kind='user' %}">テンプレートファイルダウンロード</a>
 </form>
 {% endblock %}
 

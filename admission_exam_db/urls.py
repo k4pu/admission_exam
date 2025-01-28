@@ -10,6 +10,7 @@ urlpatterns = [
     path("student/", views.student, name="student"),
     path("student/<int:student_id>", views.student_detail, name="student_detail"),
     path("upload_university_faculty", views.upload_university_faculty, name="upload_university_faculty"),
+    path("download_template_csv/<str:file_kind>", views.download_template_csv, name="download_template_csv"),
     path("upload_student", views.upload_student, name="upload_student"),
     path("upload_user", views.upload_user, name="upload_user"),
     path("upload_success", views.upload_success, name="upload_success"),

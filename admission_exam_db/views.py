@@ -95,6 +95,28 @@ def upload_university_faculty(request):
     }
     return render(request, 'admission_exam_db/upload_university_faculty.html', context)
 
+def download_template_csv(request, file_kind):
+    filename = f"template_{file_kind}.csv"
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename={filename}'},
+    )
+
+    writer = csv.writer(response)
+
+    if file_kind == "university_faculty":
+        writer.writerow(["university_faculty_code", "university_name", "faculty_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"])
+        writer.writerow(["10001" ,"旭川医科" ,"医" ,"医－前" ,"旭川医科_医_医－前" ,"医・歯・薬・保健" ,"5101" ,"医"])
+    elif file_kind == "student":
+        writer.writerow(["student_id", "homeroom_class", "attendance_number", "family_name", "given_name", "family_name_kana", "given_name_kana"])
+        writer.writerow(["7100249254", "A", "01", "昭和", "秀太", "しょうわ", "しゅうた"])
+    elif file_kind == "user":
+        writer.writerow(["username", "password", "email"])
+        writer.writerow(["test", "testpass", "test@showa-shuei.ed.jp"])
+    
+    return response
+
+
 @login_required
 @user_passes_test(is_admin)
 def upload_student(request):
