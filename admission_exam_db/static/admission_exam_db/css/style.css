@@ -1,6 +1,13 @@
 body {
     margin: 0 0 0 0;
 }
+
+main {
+    margin: 0 20px 0 20px;
+    padding: 0 0 0 0;
+    overflow: hidden;
+}
+
 /* Add a black background color to the top navigation */
 .topnav {
   margin: 0 0 0 0;
@@ -18,8 +25,15 @@ body {
   font-size: 17px;
 }
 
+h1 {
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 720px;
+}
+
 h2 {
-  margin-top: 100px;
+  margin-top: 20px;
   margin-left: auto;
   margin-right: auto;
   max-width: 720px;
