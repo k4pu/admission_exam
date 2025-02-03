@@ -1,6 +1,12 @@
 {% extends 'admission_exam_db/base.html' %}
 {% block title %}{{ student_name }}受験詳細{% endblock %}
 {% block content %}
+{% if prev_student %}
+    <a  href="{% url 'admission_exam_db:student_detail' student_id=prev_student.student_id %}">前の生徒</a>
+{% endif %}
+{% if next_student %}
+    <a  href="{% url 'admission_exam_db:student_detail' student_id=next_student.student_id %}">次の生徒</a>
+{% endif %}
 {% if student_admission_exam_list %}
     <ul>
         {% for admission_exam in student_admission_exam_list %}
