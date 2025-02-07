@@ -19,7 +19,9 @@ def is_admin(user):
 
 @login_required
 def index(request):
-    context = {}
+    context = {
+        'nbar': 'home',
+    }
     return render(request, "admission_exam_db/index.html", context)
 
 @login_required
