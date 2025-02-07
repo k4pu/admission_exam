@@ -19,7 +19,9 @@ def is_admin(user):
 
 @login_required
 def index(request):
-    context = {}
+    context = {
+        'nbar': 'home',
+    }
     return render(request, "admission_exam_db/index.html", context)
 
 @login_required
@@ -43,11 +45,25 @@ def admission_exam(request):
 @login_required
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
+
+    prev_student = Student.objects.filter(
+        Q(homeroom_class__lt=student.homeroom_class) |
+        Q(homeroom_class=student.homeroom_class, attendance_number__lt=student.attendance_number)
+    ).order_by('-homeroom_class', '-attendance_number').first()
+
+    next_student = Student.objects.filter(
+        Q(homeroom_class__gt=student.homeroom_class) |
+        Q(homeroom_class=student.homeroom_class, attendance_number__gt=student.attendance_number)
+    ).order_by('homeroom_class', 'attendance_number').first()
+
     student_admission_exam_list = StudentAdmissionExam.objects.filter(student=student)
+
     context ={
         'nbar': 'student_detail',
         'student_id': student_id,
         'student_name': ' '.join([student.family_name, student.given_name]),
+        'prev_student': prev_student,
+        'next_student': next_student,
         'student_admission_exam_list': student_admission_exam_list,
     }
     return render(request, "admission_exam_db/student_detail.html", context)

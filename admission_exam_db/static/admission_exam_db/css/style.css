@@ -73,9 +73,6 @@ h2 {
     flex-wrap: wrap;
   }
 }
-.Form-Item:nth-child(5) {
-  border-bottom: 1px solid #ddd;
-}
 .Form-Item-Label {
   width: 100%;
   max-width: 248px;
