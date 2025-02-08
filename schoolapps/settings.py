@@ -160,7 +160,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': 'form_submissions.log',
+            'filename': 'log/django/form_submissions.log',
             'formatter': 'verbose',
         },
     },
