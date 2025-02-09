@@ -32,7 +32,7 @@ class StudentAdmissionExam(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE)
     PREFERENCE_CHOICES = [
-        ('A1','受かったら必ず入学する第1志望'),# 受かったら必ず入学する
+        ('A1','受かったら必ず入学する第1志望'),
         ('A2','受かったら必ず入学する第2志望'),
         ('A3','受かったら必ず入学する第3志望'),
         ('A4','受かったら必ず入学する第4志望'),
@@ -42,8 +42,8 @@ class StudentAdmissionExam(models.Model):
         ('A8','受かったら必ず入学する第8志望'),
         ('A9','受かったら必ず入学する第9志望'),
         ('A10','受かったら必ず入学する第10志望'),
-        ('B','状況によって入学を検討する'),# 状況によって入学を検討する
-        ('C','受かっても入学しない'),# 受かっても入学しない
+        ('B','状況によって入学を検討する'),
+        ('C','受かっても入学しない'),
     ]
     RESULT_CHOICES = [
         ('AE','合格（入学）'),
