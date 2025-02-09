@@ -17,6 +17,7 @@
             <a href="{% url 'admission_exam_db:index' %}" class="{% if nbar == 'home' %}active{% endif %}">ホーム</a>
             <a href="{% url 'admission_exam_db:student' %}" class="{% if nbar == 'student' %}active{% endif %}">生徒リスト</a>
             <a href="{% url 'admission_exam_db:admission_exam' %}" class="{% if nbar == 'admission_exam' %}active{% endif %}">受験リスト</a>
+            <a href="{% url 'admission_exam_db:download_data' %}" class="{% if nbar == 'download_data' %}active{% endif %}">データダウンロード</a>
             {% if user.is_superuser %}
                 <a href="{% url 'admission_exam_db:upload_university_faculty' %}" class="{% if nbar == 'upload_university_faculty' %}active{% endif %}">大学学部アップロード</a>
                 <a href="{% url 'admission_exam_db:upload_student' %}" class="{% if nbar == 'upload_student' %}active{% endif %}">生徒アップロード</a>

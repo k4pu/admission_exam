@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-cezhqfin#w(qljrm6*=7d66q$%9#4dj*96(t=vk_&w=98kqj_4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     os.getenv('HOST_PRIVATE_IP'),
@@ -160,7 +160,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': 'form_submissions.log',
+            'filename': 'log/django/form_submissions.log',
             'formatter': 'verbose',
         },
     },

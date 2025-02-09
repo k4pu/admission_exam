@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, StreamingHttpResponse, JsonResponse
 from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, UserCSVUploadForm, StudentAdmissionExamForm
 
 from .models import Student, UniversityFaculty, StudentAdmissionExam
@@ -111,8 +111,10 @@ def upload_university_faculty(request):
     }
     return render(request, 'admission_exam_db/upload_university_faculty.html', context)
 
+@login_required
+@user_passes_test(is_admin)
 def download_template_csv(request, file_kind):
-    filename = f"template_{file_kind}.csv"
+    filename = f"{file_kind}_template.csv"
     response = HttpResponse(
         content_type="text/csv",
         headers={"Content-Disposition": f'attachment; filename={filename}'},
@@ -125,13 +127,59 @@ def download_template_csv(request, file_kind):
         writer.writerow(["10001" ,"旭川医科" ,"医" ,"医－前" ,"旭川医科_医_医－前" ,"医・歯・薬・保健" ,"5101" ,"医"])
     elif file_kind == "student":
         writer.writerow(["student_id", "homeroom_class", "attendance_number", "family_name", "given_name", "family_name_kana", "given_name_kana"])
-        writer.writerow(["7100249254", "A", "01", "昭和", "秀太", "しょうわ", "しゅうた"])
+        writer.writerow(["1900123456", "A", "01", "昭和", "秀太", "しょうわ", "しゅうた"])
     elif file_kind == "user":
         writer.writerow(["username", "password", "email"])
         writer.writerow(["test", "testpass", "test@showa-shuei.ed.jp"])
     
     return response
 
+class Echo:# https://docs.djangoproject.com/ja/5.1/howto/outputting-csv/よりストリーミングCSVダウンロード用クラス ファイルオブジェクトのかわりに動作して、メモリを消費しない
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value# 受け取った値をそのまま返すのでメモリを消費しない
+
+def download_data_csv(request, file_kind):
+    filename = f"{file_kind}_data.csv"
+
+    if file_kind == "student":
+        student_list = Student.objects.order_by("homeroom_class", "attendance_number")
+
+        header_row = [["student_id", "homeroom_class", "attendance_number", "family_name", "given_name", "family_name_kana", "given_name_kana"]]
+        data_rows = [[student.student_id, student.homeroom_class, student.attendance_number, student.family_name, student.given_name, student.family_name_kana, student.given_name_kana] for student in student_list]
+
+    elif file_kind == "university_faculty":
+        faculty_list = UniversityFaculty.objects.order_by("university_faculty_code")
+
+        header_row = [["university_faculty_code", "university_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_code"]]
+        data_rows = [[faculty.university_faculty_code, faculty.university_name, faculty.department_name, faculty.display_name, faculty.faculty_system_midstream_name, faculty.faculty_system_midstream_name, faculty.faculty_system_field_code, faculty.faculty_system_field_code] for faculty in faculty_list]
+
+    elif file_kind == "student_admission_exam":
+        admission_exam_list = StudentAdmissionExam.objects.order_by("id")# TODO これはより良いorderがありそうなので考える
+
+        header_row = [["student_id", "university_faculty_code", "preference", "result"]]
+        data_rows = [[admission_exam.student.student_id, admission_exam.university_faculty.university_faculty_code, admission_exam.preference, admission_exam.result] for admission_exam in admission_exam_list]
+
+    write_rows = header_row + data_rows
+    pseudo_buffer = Echo()
+    writer = csv.writer(pseudo_buffer)
+    return StreamingHttpResponse(
+        (writer.writerow(row) for row in write_rows),
+        content_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename={filename}'},
+    )
+
+@login_required
+@user_passes_test(is_admin)
+def download_data(request):
+    context = {
+        'nbar': 'download_data',
+    }
+    return render(request, "admission_exam_db/download_data.html", context)
 
 @login_required
 @user_passes_test(is_admin)
