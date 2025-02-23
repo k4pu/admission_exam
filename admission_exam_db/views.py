@@ -126,8 +126,8 @@ def download_template_csv(request, file_kind):
         writer.writerow(["university_faculty_code", "university_name", "faculty_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"])
         writer.writerow(["10001" ,"旭川医科" ,"医" ,"医－前" ,"旭川医科_医_医－前" ,"医・歯・薬・保健" ,"5101" ,"医"])
     elif file_kind == "student":
-        writer.writerow(["student_id", "homeroom_class", "attendance_number", "family_name", "given_name", "family_name_kana", "given_name_kana"])
-        writer.writerow(["1900123456", "A", "01", "昭和", "秀太", "しょうわ", "しゅうた"])
+        writer.writerow(["student_id", "homeroom_class", "attendance_number", "family_name", "given_name", "family_name_kana", "given_name_kana", "graduation_year"])
+        writer.writerow(["1900123456", "A", "01", "昭和", "秀太", "しょうわ", "しゅうた", "2025"])
     elif file_kind == "user":
         writer.writerow(["username", "password", "email"])
         writer.writerow(["test", "testpass", "test@showa-shuei.ed.jp"])
@@ -161,8 +161,15 @@ def download_data_csv(request, file_kind):
     elif file_kind == "student_admission_exam":
         admission_exam_list = StudentAdmissionExam.objects.order_by("id")# TODO これはより良いorderがありそうなので考える
 
-        header_row = [["student_id", "university_faculty_code", "preference", "result"]]
-        data_rows = [[admission_exam.student.student_id, admission_exam.university_faculty.university_faculty_code, admission_exam.preference, admission_exam.result] for admission_exam in admission_exam_list]
+    elif file_kind == "preference_choice":
+        preference_correspondense_list = StudentAdmissionExam.PREFERENCE_CHOICES
+        header_row = [["preference", "preference_label"]]
+        data_rows = [[code, label] for code, label in preference_correspondense_list]
+
+    elif file_kind == "result_choice":
+        result_corespondence_list = StudentAdmissionExam.RESULT_CHOICES
+        header_row = [["result", "result_label"]]
+        data_rows = [[code, label] for code, label in result_corespondence_list]
 
     write_rows = header_row + data_rows
     pseudo_buffer = Echo()
@@ -174,7 +181,6 @@ def download_data_csv(request, file_kind):
     )
 
 @login_required
-@user_passes_test(is_admin)
 def download_data(request):
     context = {
         'nbar': 'download_data',
