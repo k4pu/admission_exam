@@ -161,8 +161,15 @@ def download_data_csv(request, file_kind):
     elif file_kind == "student_admission_exam":
         admission_exam_list = StudentAdmissionExam.objects.order_by("id")# TODO これはより良いorderがありそうなので考える
 
-        header_row = [["student_id", "university_faculty_code", "preference", "result"]]
-        data_rows = [[admission_exam.student.student_id, admission_exam.university_faculty.university_faculty_code, admission_exam.preference, admission_exam.result] for admission_exam in admission_exam_list]
+    elif file_kind == "preference_choice":
+        preference_correspondense_list = StudentAdmissionExam.PREFERENCE_CHOICES
+        header_row = [["preference", "preference_label"]]
+        data_rows = [[code, label] for code, label in preference_correspondense_list]
+
+    elif file_kind == "result_choice":
+        result_corespondence_list = StudentAdmissionExam.RESULT_CHOICES
+        header_row = [["result", "result_label"]]
+        data_rows = [[code, label] for code, label in result_corespondence_list]
 
     write_rows = header_row + data_rows
     pseudo_buffer = Echo()
