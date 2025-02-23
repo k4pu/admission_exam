@@ -2,21 +2,26 @@
 {% block title %}生徒一覧{% endblock %}
 {% block content %}
 {% if student_list %}
-    <input type="text" id="student-name-filterInput" placeholder="検索" class="filterInput">
-    <table class="student-table">
+    <input type="text" id="homeroom-class-filterInput" placeholder="組" class="filterInput">
+    <input type="number" id="attendance-number-filterInput" placeholder="番" class="filterInput">
+    <input type="text" id="student-name-filterInput" placeholder="氏名" class="filterInput">
+    <table class="student-table table table-striped table-bordered table-hover">
+    <input type="number" id="graduation-year-filterInput" placeholder="卒業年" class="filterInput">
         <thead>
             <tr>
                 <th>組</th>
                 <th>番</th>
                 <th>氏名</th>
+                <th>卒業年度</th>
             </tr>
         </thead>
         <tbody>
             {% for student in student_list %}
-            <tr>
-                <td>{{ student.homeroom_class}}</td>
-                <td>{{ student.attendance_number}}</td>
-                <td><a href="{% url 'admission_exam_db:student_detail' student.student_id %}">{{ student.family_name }} {{student.given_name}}</a></td>
+            <tr onclick="window.location.href='{% url 'admission_exam_db:student_detail' student_id=student.student_id%}';" style="cursor:pointer;">
+                <td class="homeroom_class">{{ student.homeroom_class}}</td>
+                <td class="attendance_number">{{ student.attendance_number}}</td>
+                <td class="student_name">{{ student.family_name }} {{student.given_name}}</td>
+                <td class="graduation_year">{{ student.graduation_year}}</td>
             </tr>
             {% endfor %}
         </tbody>

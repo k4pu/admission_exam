@@ -1,20 +1,21 @@
-document.getElementById('admission-exam-filterInput').addEventListener('input', function() {
-    const filterValue = this.value.toLowerCase();
-    const rows = document.querySelectorAll('.admission-exam-table tbody tr')
+function filterExams() {
+    const yearFilter = document.getElementById('exam-year-filterInput').value;
+    const universityFilter = document.getElementById('university-name-filterInput').value.toLowerCase();
+
+    const rows = document.querySelectorAll('.admission_exam_table tbody tr')
 
     rows.forEach(row => {
-        const cells = row.getElementsByTagName('td');
-        let match = false;
+        const yearCell = row.querySelector('td.exam_year');
+        const yearText = yearCell ? yearCell.textContent.trim() : '';
+        const yearMatches = yearFilter === '' || yearText.indexOf(String(yearFilter)) !== -1;
 
-        for (let i = 0; i < cells.length; i++) {
-            if (cells[i].textContent.toLowerCase().includes(filterValue)){
-                match = true;
-                break;
-            }
-        }
+        const universityText = row.querySelector('td.university').textContent.toLowerCase();
+        const universityMatches = universityFilter === '' || universityText.includes(universityFilter);
 
-        row.style.display = match ? '' : 'none';
-
+        row.style.display = (yearMatches && universityMatches) ? '' : 'none';
+        
     });
-})
+}
 
+document.getElementById('exam-year-filterInput').addEventListener('input', filterExams);
+document.getElementById('university-name-filterInput').addEventListener('input', filterExams);

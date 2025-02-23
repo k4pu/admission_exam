@@ -1,16 +1,20 @@
 from django.db import models
+from django.core import validators
 import logging
+import datetime
 
 logger = logging.getLogger('django')
 
+
 class Student(models.Model):
-    student_id = models.CharField(max_length=10, primary_key=True)
+    student_id = models.CharField(max_length=7, primary_key=True)
     homeroom_class = models.CharField(max_length=1)
     attendance_number = models.CharField(max_length=2)
     family_name = models.CharField(max_length=30)
     given_name = models.CharField(max_length=30)
     family_name_kana = models.CharField(max_length=30)
     given_name_kana = models.CharField(max_length=30)
+    graduation_year = models.CharField(max_length=4)
 
     def __str__(self):
         return " ".join([self.family_name, self.given_name])
@@ -31,6 +35,7 @@ class UniversityFaculty(models.Model):
 class StudentAdmissionExam(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE)
+    year_to_take = models.CharField(max_length=4)
     PREFERENCE_CHOICES = [
         ('A1','受かったら必ず入学する第1志望'),
         ('A2','受かったら必ず入学する第2志望'),
