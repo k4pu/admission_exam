@@ -132,8 +132,8 @@ def download_template_csv(request, file_kind):
         writer.writerow(["username", "password", "email"])
         writer.writerow(["test", "testpass", "test@showa-shuei.ed.jp"])
     elif file_kind == "student_admission_exam":
-        writer.writerow(["student_id", "university_faculty_code", "year_to_take", "preference", "result"])
-        writer.writerow(["1990123", "10001", "2025", "A1", "AE"])
+        writer.writerow(["student_admission_exam_id", "student_id", "university_faculty_code", "year_to_take", "preference", "result"])
+        writer.writerow(["30", "1990123", "10001", "2025", "A1", "AE"])
     
     return response
 
@@ -163,8 +163,8 @@ def download_data_csv(request, file_kind):
 
     elif file_kind == "student_admission_exam":
         admission_exam_list = StudentAdmissionExam.objects.order_by("id")# TODO これはより良いorderがありそうなので考える
-        header_row = [["student_id", "university_faculty_code", "year_to_take", "preference", "result"]]
-        data_rows = [[exam.student.student_id, exam.university_faculty.university_faculty_code,year_to_take, exam.preference, exam.result] for exam in admission_exam_list]
+        header_row = [["student_admission_exam_id", "student_id", "university_faculty_code", "year_to_take", "preference", "result"]]
+        data_rows = [[exam.id, exam.student.student_id, exam.university_faculty.university_faculty_code, exam.year_to_take, exam.preference, exam.result] for exam in admission_exam_list]
 
     elif file_kind == "preference_choice":
         preference_correspondense_list = StudentAdmissionExam.PREFERENCE_CHOICES
@@ -299,6 +299,7 @@ def upload_student_admission_exam(request):
             decoded_file = csv_file.read().decode('utf-8-sig').splitlines()
             reader = csv.DictReader(decoded_file)
             for row in reader:
+                student_admission_exam_id = row.get('student_admission_exam_id', None)# なければNone
                 student_id = row['student_id']
                 university_faculty_code = row['university_faculty_code']
                 year_to_take = row['year_to_take']
@@ -308,13 +309,26 @@ def upload_student_admission_exam(request):
                 student = get_object_or_404(Student, student_id=student_id)
                 university_faculty = get_object_or_404(UniversityFaculty, university_faculty_code=university_faculty_code)
                 # データモデルに保存
-                StudentAdmissionExam.objects.create(
-                    student=student,
-                    university_faculty=university_faculty,
-                    year_to_take=year_to_take,
-                    preference=preference,
-                    result=result,
-                )
+                if student_admission_exam_id:
+                    StudentAdmissionExam.objects.update_or_create(
+                        id=student_admission_exam_id,
+                        defaults = {
+                        'student': student,
+                        'university_faculty': university_faculty,
+                        'year_to_take': year_to_take,
+                        'preference': preference,
+                        'result': result,
+                        }
+                    )
+                else:
+                    StudentAdmissionExam.objects.create(
+                        student=student,
+                        university_faculty=university_faculty,
+                        year_to_take=year_to_take,
+                        preference=preference,
+                        result=result,
+                    )
+
             return redirect('admission_exam_db:upload_success') # アップロード成功画面にリダイレクト
     else:
         form = StudentAdmissionExamCSVUploadForm()
