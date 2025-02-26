@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, StreamingHttpResponse, JsonResponse
-from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, UserCSVUploadForm, StudentAdmissionExamForm
+from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, UserCSVUploadForm, StudentAdmissionExamForm, StudentAdmissionExamCSVUploadForm
 
 from .models import Student, UniversityFaculty, StudentAdmissionExam
 from django.contrib.auth.models import User
@@ -127,10 +127,13 @@ def download_template_csv(request, file_kind):
         writer.writerow(["10001" ,"旭川医科" ,"医" ,"医－前" ,"旭川医科_医_医－前" ,"医・歯・薬・保健" ,"5101" ,"医"])
     elif file_kind == "student":
         writer.writerow(["student_id", "homeroom_class", "attendance_number", "family_name", "given_name", "family_name_kana", "given_name_kana", "graduation_year"])
-        writer.writerow(["1900123456", "A", "01", "昭和", "秀太", "しょうわ", "しゅうた", "2025"])
+        writer.writerow(["1900123", "A", "01", "昭和", "秀太", "しょうわ", "しゅうた", "2025"])
     elif file_kind == "user":
         writer.writerow(["username", "password", "email"])
         writer.writerow(["test", "testpass", "test@showa-shuei.ed.jp"])
+    elif file_kind == "student_admission_exam":
+        writer.writerow(["student_id", "university_faculty_code", "year_to_take", "preference", "result"])
+        writer.writerow(["1990123", "10001", "2025", "A1", "AE"])
     
     return response
 
@@ -160,6 +163,8 @@ def download_data_csv(request, file_kind):
 
     elif file_kind == "student_admission_exam":
         admission_exam_list = StudentAdmissionExam.objects.order_by("id")# TODO これはより良いorderがありそうなので考える
+        header_row = [["student_id", "university_faculty_code", "year_to_take", "preference", "result"]]
+        data_rows = [[exam.student.student_id, exam.university_faculty.university_faculty_code,year_to_take, exam.preference, exam.result] for exam in admission_exam_list]
 
     elif file_kind == "preference_choice":
         preference_correspondense_list = StudentAdmissionExam.PREFERENCE_CHOICES
@@ -283,6 +288,41 @@ def upload_user(request):
 def upload_success(request):
     context = {}
     return render(request, 'admission_exam_db/upload_success.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def upload_student_admission_exam(request):
+    if request.method == "POST":
+        form = StudentAdmissionExamCSVUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            csv_file = request.FILES['csv_file']
+            decoded_file = csv_file.read().decode('utf-8-sig').splitlines()
+            reader = csv.DictReader(decoded_file)
+            for row in reader:
+                student_id = row['student_id']
+                university_faculty_code = row['university_faculty_code']
+                year_to_take = row['year_to_take']
+                preference = row['preference']
+                result = row['result']
+
+                student = get_object_or_404(Student, student_id=student_id)
+                university_faculty = get_object_or_404(UniversityFaculty, university_faculty_code=university_faculty_code)
+                # データモデルに保存
+                StudentAdmissionExam.objects.create(
+                    student=student,
+                    university_faculty=university_faculty,
+                    year_to_take=year_to_take,
+                    preference=preference,
+                    result=result,
+                )
+            return redirect('admission_exam_db:upload_success') # アップロード成功画面にリダイレクト
+    else:
+        form = StudentAdmissionExamCSVUploadForm()
+    context = {
+        'nbar': 'upload_student_admission_exam',
+        'form': form,
+    }
+    return render(request, 'admission_exam_db/upload_student_admission_exam.html', context)
 
 @login_required
 def create_student_admission_exam(request, student_id):

@@ -3,6 +3,9 @@ from .models import UniversityFaculty, StudentAdmissionExam
 import datetime
 
 
+class StudentAdmissionExamCSVUploadForm(forms.Form):
+    csv_file = forms.FileField(label='CSVファイルを選択')
+
 class UniversityFacultyCSVUploadForm(forms.Form):
     csv_file = forms.FileField(label='CSVファイルを選択')
 

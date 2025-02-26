@@ -22,6 +22,7 @@
             {% if user.is_superuser %}
                 <a href="{% url 'admission_exam_db:upload_university_faculty' %}" class="{% if nbar == 'upload_university_faculty' %}active{% endif %}">大学学部アップロード</a>
                 <a href="{% url 'admission_exam_db:upload_student' %}" class="{% if nbar == 'upload_student' %}active{% endif %}">生徒アップロード</a>
+                <a href="{% url 'admission_exam_db:upload_student_admission_exam' %}" class="{% if nbar == 'upload_student_admission_exam' %}active{% endif %}">受験アップロード</a>
                 <a href="{% url 'admission_exam_db:upload_user' %}" class="{% if nbar == 'upload_user' %}active{% endif %}">ユーザアップロード</a>
             {% endif %}
             {% if user.is_authenticated %}

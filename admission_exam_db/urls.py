@@ -14,6 +14,7 @@ urlpatterns = [
     path("download_data", views.download_data, name="download_data"),
     path("download_data/csv/<str:file_kind>", views.download_data_csv, name="download_data_csv"),
     path("upload_student", views.upload_student, name="upload_student"),
+    path("upload_student_admission_exam", views.upload_student_admission_exam, name="upload_student_admission_exam"),
     path("upload_user", views.upload_user, name="upload_user"),
     path("upload_success", views.upload_success, name="upload_success"),
     path("student/<int:student_id>/create_student_admission_exam", views.create_student_admission_exam, name="create_student_admission_exam"),
