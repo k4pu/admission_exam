@@ -17,6 +17,12 @@ logger = logging.getLogger('django')
 def is_admin(user):
     return user.is_superuser
 
+def is_editor(user):
+    if user.groups.filter(name="editor").exists():
+        return True
+    else:
+        return False
+
 @login_required
 def index(request):
     context = {
@@ -43,6 +49,7 @@ def admission_exam(request):
     return render(request, "admission_exam_db/admission_exam.html", context)
 
 @login_required
+@user_passes_test(is_editor or is_admin)
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
 
@@ -146,6 +153,7 @@ class Echo:# https://docs.djangoproject.com/ja/5.1/howto/outputting-csv/より�
         """Write the value by returning it, instead of storing in a buffer."""
         return value# 受け取った値をそのまま返すのでメモリを消費しない
 
+@login_required
 def download_data_csv(request, file_kind):
     filename = f"{file_kind}_data.csv"
 
@@ -339,6 +347,7 @@ def upload_student_admission_exam(request):
     return render(request, 'admission_exam_db/upload_student_admission_exam.html', context)
 
 @login_required
+@user_passes_test(is_editor or is_admin)
 def create_student_admission_exam(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     if request.method == 'POST':
@@ -359,6 +368,7 @@ def create_student_admission_exam(request, student_id):
     return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
 
 @login_required
+@user_passes_test(is_editor or is_admin)
 def edit_student_admission_exam(request, student_id, student_admission_exam_id):
     student = get_object_or_404(Student, student_id=student_id)
     admission_exam = get_object_or_404(StudentAdmissionExam, id=student_admission_exam_id, student=student)
@@ -382,6 +392,8 @@ def edit_student_admission_exam(request, student_id, student_admission_exam_id):
     }
     return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
 
+@login_required
+@user_passes_test(is_editor or is_admin)
 def delete_student_admission_exam(request, student_id, student_admission_exam_id):
     student = get_object_or_404(Student, student_id=student_id)
     admission_exam = get_object_or_404(StudentAdmissionExam, id=student_admission_exam_id, student=student)
@@ -405,6 +417,7 @@ def university_faculty_autocomplete(request):
     results = [{"id": faculty.university_faculty_code, "name": faculty.display_name} for faculty in faculties]
     return JsonResponse(results, safe=False)
 
+@login_required
 def user(request):
     context = {}
     return render(request, 'admission_exam_db/user.html', context)
