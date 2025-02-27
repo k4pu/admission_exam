@@ -18,7 +18,7 @@ def is_admin(user):
     return user.is_superuser
 
 def is_editor(user):
-    if user.groups.filter(name="editor").exists():
+    if user.groups.filter(name="editor").exists() or user.is_superuser:
         return True
     else:
         return False
@@ -49,7 +49,7 @@ def admission_exam(request):
     return render(request, "admission_exam_db/admission_exam.html", context)
 
 @login_required
-@user_passes_test(is_editor or is_admin)
+@user_passes_test(is_editor)
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
 
@@ -347,7 +347,7 @@ def upload_student_admission_exam(request):
     return render(request, 'admission_exam_db/upload_student_admission_exam.html', context)
 
 @login_required
-@user_passes_test(is_editor or is_admin)
+@user_passes_test(is_editor)
 def create_student_admission_exam(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     if request.method == 'POST':
@@ -368,7 +368,7 @@ def create_student_admission_exam(request, student_id):
     return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
 
 @login_required
-@user_passes_test(is_editor or is_admin)
+@user_passes_test(is_editor)
 def edit_student_admission_exam(request, student_id, student_admission_exam_id):
     student = get_object_or_404(Student, student_id=student_id)
     admission_exam = get_object_or_404(StudentAdmissionExam, id=student_admission_exam_id, student=student)
@@ -393,7 +393,7 @@ def edit_student_admission_exam(request, student_id, student_admission_exam_id):
     return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
 
 @login_required
-@user_passes_test(is_editor or is_admin)
+@user_passes_test(is_editor)
 def delete_student_admission_exam(request, student_id, student_admission_exam_id):
     student = get_object_or_404(Student, student_id=student_id)
     admission_exam = get_object_or_404(StudentAdmissionExam, id=student_admission_exam_id, student=student)
