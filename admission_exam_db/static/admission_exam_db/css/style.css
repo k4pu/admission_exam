@@ -43,6 +43,9 @@ h2 {
     margin-top: 60px;
   }
 }
+h2.university-faculty-name{
+  margin-top:20px;
+}
 
 /* Form用 */
 .Form {

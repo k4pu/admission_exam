@@ -388,6 +388,7 @@ def edit_student_admission_exam(request, student_id, student_admission_exam_id):
         'form': form,
         'student_id': student_id,
         'student_admission_exam_id': student_admission_exam_id,
+        'university_faculty_display_name': admission_exam.university_faculty.display_name,
         'student_name': ' '.join([student.family_name, student.given_name]),
     }
     return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
