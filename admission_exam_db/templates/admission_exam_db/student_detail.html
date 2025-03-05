@@ -8,11 +8,22 @@
     <a  href="{% url 'admission_exam_db:student_detail' student_id=next_student.student_id %}">次の生徒</a>
 {% endif %}
 {% if student_admission_exam_list %}
-    <ul>
-        {% for admission_exam in student_admission_exam_list %}
-            <li><a href="{% url 'admission_exam_db:edit_student_admission_exam' student_id=admission_exam.student.student_id student_admission_exam_id=admission_exam.id %}">{{ admission_exam.university_faculty.display_name }}</a></li>
-        {% endfor %}
-    </ul>
+    <table class="student-admission-exam-table table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>大学_学部</th>
+                <th>結果</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for admission_exam in student_admission_exam_list %}
+            <tr onclick="window.location.href='{% url 'admission_exam_db:edit_student_admission_exam' student_id=admission_exam.student.student_id student_admission_exam_id=admission_exam.id %}';" style="cursor:pointer;">
+                <td class="admission_exam_display_name">{{ admission_exam.university_faculty.display_name }}</td>
+                <td class="admission_exam_result">{{ admission_exam.get_result_display }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% else %}
     <p>No admission exam data are available.</p>
 {% endif %}
