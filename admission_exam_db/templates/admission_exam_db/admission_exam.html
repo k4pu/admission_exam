@@ -17,11 +17,11 @@
         <tbody>
             {% for admission_exam in admission_exam_list %}
             <tr onclick="window.location.href='{% url 'admission_exam_db:edit_student_admission_exam' student_id=admission_exam.student.student_id student_admission_exam_id=admission_exam.id %}';" style="cursor:pointer;">
-                <td class="exam_year">{{ admission_exam.year_to_take}}</td>
-                <td class="university">{{ admission_exam.university_faculty.university_name}}</td>
-                <td>{{ admission_exam.university_faculty.faculty_name}}</td>
-                <td>{{ admission_exam.student.family_name }} {{ admission_exam.student.given_name}}</td>
-                <td>{{ admission_exam.get_result_display}}</td>
+                <td class="exam_year">{{ admission_exam.year_to_take }}</td>
+                <td class="university">{{ admission_exam.university_faculty.university_name }}</td>
+                <td>{{ admission_exam.university_faculty.faculty_name }}</td>
+                <td>{{ admission_exam.student.family_name }} {{ admission_exam.student.given_name }}</td>
+                <td>{{ admission_exam.get_result_display }}</td>
             </tr>
             {% endfor %}
         </tbody>
