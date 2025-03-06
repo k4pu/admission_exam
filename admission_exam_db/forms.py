@@ -18,12 +18,13 @@ class UserCSVUploadForm(forms.Form):
 class StudentAdmissionExamForm(forms.ModelForm):
     class Meta:
         model = StudentAdmissionExam
-        fields = ['year_to_take', 'university_faculty', 'preference', 'result']
+        fields = ['year_to_take', 'university_faculty', 'preference', 'result', 'info']
         labels = {
             'year_to_take': '入試年度',
             'university_faculty': '大学・学部コード',
             'preference': '志望',
             'result': '結果',
+            'info': '備考',
         }
         widgets = {
             'year_to_take': forms.NumberInput(attrs={
@@ -40,6 +41,9 @@ class StudentAdmissionExamForm(forms.ModelForm):
             }),
             'result': forms.Select(attrs={
                 'class': 'Form-Item-Choice',
+            }),
+            'info': forms.Textarea(attrs={
+                'class': 'Form-Item-Textarea',
             }),
         }
 

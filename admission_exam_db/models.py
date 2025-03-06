@@ -83,6 +83,12 @@ class StudentAdmissionExam(models.Model):
         null=True,
         blank=True
     )
+    info = models.CharField( #備考
+        max_length=200,
+        null=True,
+        blank=True
+    )
+
     def __str__(self):
         return " ".join([self.student.family_name, self.student.given_name]) + ": " + self.university_faculty.display_name
 
