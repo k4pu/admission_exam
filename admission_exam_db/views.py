@@ -32,7 +32,7 @@ def index(request):
 
 @login_required
 def student(request):
-    student_list = Student.objects.order_by("homeroom_class", "attendance_number")
+    student_list = Student.objects.order_by("graduation_year", "homeroom_class", "attendance_number")
     context ={
         'nbar': 'student',
         'student_list': student_list,
@@ -49,7 +49,6 @@ def admission_exam(request):
     return render(request, "admission_exam_db/admission_exam.html", context)
 
 @login_required
-@user_passes_test(is_editor)
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
 
@@ -217,6 +216,7 @@ def upload_student(request):
                 given_name = row['given_name']
                 family_name_kana = row['family_name_kana']
                 given_name_kana = row['given_name_kana']
+                graduation_year = row['graduation_year']
 
                 # データモデルに保存
                 Student.objects.update_or_create(
@@ -229,6 +229,7 @@ def upload_student(request):
                         'family_name_kana': family_name_kana,
                         'given_name': given_name,
                         'given_name_kana': given_name_kana,
+                        'graduation_year': graduation_year,
                     }
                 )
             return redirect('admission_exam_db:upload_success') # アップロード成功画面にリダイレクト
