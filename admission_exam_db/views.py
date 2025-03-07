@@ -42,9 +42,11 @@ def student(request):
 @login_required
 def admission_exam(request):
     admission_exam_list = StudentAdmissionExam.objects.order_by("university_faculty_id")
+    result_choices = [ choice for _, choice in StudentAdmissionExam.RESULT_CHOICES]
     context ={
         'nbar': 'admission_exam',
         'admission_exam_list': admission_exam_list,
+        'result_choices': result_choices,
     }
     return render(request, "admission_exam_db/admission_exam.html", context)
 
@@ -172,6 +174,11 @@ def download_data_csv(request, file_kind):
         admission_exam_list = StudentAdmissionExam.objects.order_by("id")# TODO これはより良いorderがありそうなので考える
         header_row = [["student_admission_exam_id", "student_id", "university_faculty_code", "year_to_take", "preference", "result"]]
         data_rows = [[exam.id, exam.student.student_id, exam.university_faculty.university_faculty_code, exam.year_to_take, exam.preference, exam.result] for exam in admission_exam_list]
+
+    elif file_kind == "student_admission_exam_display":
+        admission_exam_list = StudentAdmissionExam.objects.order_by("year_to_take", "student__homeroom_class", "student__attendance_number", "university_faculty__university_faculty_code")# TODO これはより良いorderがありそうなので考える
+        header_row = [["受験年", "組", "番", "氏名", "大学_学部", "結果"]]
+        data_rows = [[exam.year_to_take, exam.student.homeroom_class, exam.student.attendance_number, exam.student.family_name + " " + exam.student.given_name, exam.university_faculty.display_name, exam.get_result_display()] for exam in admission_exam_list]
 
     elif file_kind == "preference_choice":
         preference_correspondense_list = StudentAdmissionExam.PREFERENCE_CHOICES
