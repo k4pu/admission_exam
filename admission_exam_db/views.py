@@ -42,7 +42,7 @@ def student(request):
 @login_required
 def admission_exam(request):
     admission_exam_list = StudentAdmissionExam.objects.order_by("university_faculty_id")
-    result_choices = [ choice for _, choice in StudentAdmissionExam.RESULT_CHOICES]
+    result_choices = [ {"key":key, "value":value} for key, value in StudentAdmissionExam.RESULT_CHOICES ] + [{"key":"None", "value": "None"}]
     context ={
         'nbar': 'admission_exam',
         'admission_exam_list': admission_exam_list,

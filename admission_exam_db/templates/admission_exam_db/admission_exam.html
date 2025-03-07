@@ -4,6 +4,31 @@
 {% if admission_exam_list %}
     <input type="number" id="exam-year-filterInput" placeholder="受験年度" class="filterInput">
     <input type="text" id="university-name-filterInput" placeholder="大学名" class="filterInput">
+    <input type="text" id="faculty-name-filterInput" placeholder="学部名" class="filterInput">
+    <input type="text" id="student-name-filterInput" placeholder="氏名" class="filterInput">
+
+
+    <!-- Modal -->
+    <!-- モーダルを開くボタン -->
+    <button class="modal-open js-modal-open">受験結果フィルター</button>
+
+    <!-- モーダル本体 -->
+    <div class="modal js-modal">
+        <div class="modal-container">
+            <!-- モーダルを閉じるボタン -->
+            <div class="modal-close js-modal-close">×</div>
+            <!-- モーダル内部のコンテンツ -->
+            <div class="modal-content">
+                <p>受験結果フィルター</p>
+                <ul>
+                {% for choice in result_choices %}
+                    <label><li><input type="checkbox" id={{ choice.key }} name="result-filter" class="result-filterChoice" value={{ choice.value }} checked >{{ choice.value }}</li></label>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <table class="admission_exam_table table table-striped table-bordered table-hover">
         <thead>
             <tr>
@@ -11,7 +36,7 @@
                 <th>大学</th>
                 <th>学部</th>
                 <th>氏名</th>
-                <th>合否</th>
+                <th>結果</th>
             </tr>
         </thead>
         <tbody>
@@ -19,9 +44,9 @@
             <tr onclick="window.location.href='{% url 'admission_exam_db:edit_student_admission_exam' student_id=admission_exam.student.student_id student_admission_exam_id=admission_exam.id %}';" style="cursor:pointer;">
                 <td class="exam_year">{{ admission_exam.year_to_take }}</td>
                 <td class="university">{{ admission_exam.university_faculty.university_name }}</td>
-                <td>{{ admission_exam.university_faculty.faculty_name }}</td>
-                <td>{{ admission_exam.student.family_name }} {{ admission_exam.student.given_name }}</td>
-                <td>{{ admission_exam.get_result_display }}</td>
+                <td class="faculty">{{ admission_exam.university_faculty.faculty_name }}</td>
+                <td class="student_name">{{ admission_exam.student.family_name }} {{ admission_exam.student.given_name }}</td>
+                <td class="result">{{ admission_exam.get_result_display }}</td>
             </tr>
             {% endfor %}
         </tbody>
