@@ -113,9 +113,9 @@ class StudentAdmissionExam(models.Model):
         is_new = self.pk is None  # 既存のデータであればpkが存在
 
         # result_categoryの設定
-        if self.result in [key for key, _ in PASSED_CHOICES]:
+        if self.result in [key for key, _ in self.PASSED_CHOICES]:
             self.result_status = 'P'
-        elif self.result in [key for key, _ in REJECTED_CHOICES]:
+        elif self.result in [key for key, _ in self.REJECTED_CHOICES]:
             self.result_status = 'R'
         else:
             self.result_status = 'Y'
