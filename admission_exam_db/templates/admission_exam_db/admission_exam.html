@@ -20,11 +20,60 @@
             <!-- モーダル内部のコンテンツ -->
             <div class="modal-content">
                 <p>受験結果フィルター</p>
-                <ul>
-                {% for choice in result_choices %}
-                    <label><li><input type="checkbox" id={{ choice.key }} name="result-filter" class="result-filterChoice" value={{ choice.value }} checked >{{ choice.value }}</li></label>
-                {% endfor %}
-                </ul>
+                <section class="passed-choices">
+                    <section class="twocols">
+                        <div class="twocols-container">
+                            <div class="col">
+                                <ul>
+                                    {% for choice in passed_choices %}
+                                    <label><li><input type="checkbox" id={{ choice.key }} name="result-filter" class="passed-filterChoice result-filterChoice" value={{ choice.value }} checked >{{ choice.value }}</li></label>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col">
+                                <ul>
+                                    <label><li><input type="checkbox" id="passed-choice" name="result-filter" value="P" checked >合格</li></label>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+                <section class="rejected-choices">
+                    <section class="twocols">
+                        <div class="twocols-container">
+                            <div class="col">
+                                <ul>
+                                    {% for choice in rejected_choices %}
+                                    <label><li><input type="checkbox" id={{ choice.key }} name="result-filter" class="rejected-filterChoice result-filterChoice" value={{ choice.value }} checked >{{ choice.value }}</li></label>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col">
+                                <ul>
+                                    <label><li><input type="checkbox" id="rejected-choice" name="result-filter" value="P" checked >不合格</li></label>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+                <section class="yet-choices">
+                    <section class="twocols">
+                        <div class="twocols-container">
+                            <div class="col">
+                                <ul>
+                                    {% for choice in yet_choices %}
+                                    <label><li><input type="checkbox" id={{ choice.key }} name="result-filter" class="yet-filterChoice result-filterChoice" value={{ choice.value }} checked >{{ choice.value }}</li></label>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col">
+                                <ul>
+                                    <label><li><input type="checkbox" id="yet-choice" name="result-filter" value="P" checked >未定</li></label>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                </section>
             </div>
         </div>
     </div>
