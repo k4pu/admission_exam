@@ -20,7 +20,7 @@ services:
       - .:/app
       - static_data:/app/staticfiles
     # ports: # debug用
-      # - "8000:8000" # debug用
+    #   - "8000:8000" # debug用
     depends_on:
       - db
     networks:
