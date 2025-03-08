@@ -50,7 +50,7 @@ class StudentAdmissionExam(models.Model):
         ('B','状況によって入学を検討する'),
         ('C','受かっても入学しない'),
     ]
-    RESULT_CHOICES = [
+    PASSED_CHOICES = [
         ('AE','合格（入学）'),
         ('FASN','前期合格で後期受験せず'),
         ('AN','合格（入学せず）'),
@@ -61,8 +61,9 @@ class StudentAdmissionExam(models.Model):
         ('AAN','追加合格（不合格から合格）して入学せず'),
         ('SAE','補欠合格（補欠から合格）して入学'),
         ('SAN','補欠合格（補欠から合格）して入学せず'),
-        ('S','補欠'),
-        ('R','不合格'),
+    ]
+    REJECTED_CHOICES = [
+        ('R','不合格'),# Rejectedのつもりやったけど, Failedの方が自然やったみたい.更新しよか迷う.
         ('1A2N','1次合格2次受験せず'),
         ('1A2R','1次合格2次不合格'),
         ('1R','1次不合格'),
@@ -70,6 +71,16 @@ class StudentAdmissionExam(models.Model):
         ('N','受験せず（受験番号あり）'),
         ('NA','出願せず（受験番号なし）'),
         ('REAN','推薦、総合型で合格したので受験せず'),
+    ]
+    YET_CHOICES = [
+        ('S','補欠'),
+    ] + [('None', 'None')]
+    RESULT_CHOICES = PASSED_CHOICES + REJECTED_CHOICES + YET_CHOICES
+
+    RESULT_STATUS_CHOICES = [
+        ('P','合格'),
+        ('R','不合格'),
+        ('Y','未定'),
     ]
     preference = models.CharField( # 志望
         max_length=3,
@@ -80,6 +91,12 @@ class StudentAdmissionExam(models.Model):
     result = models.CharField(
         max_length=4,
         choices=RESULT_CHOICES,
+        null=True,
+        blank=True
+    )
+    result_status = models.CharField(
+        max_length=1,
+        choices=RESULT_STATUS_CHOICES,
         null=True,
         blank=True
     )
@@ -94,6 +111,14 @@ class StudentAdmissionExam(models.Model):
 
     def save(self, user=None, *args, **kwargs):
         is_new = self.pk is None  # 既存のデータであればpkが存在
+
+        # result_categoryの設定
+        if self.result in [key for key, _ in PASSED_CHOICES]:
+            self.result_status = 'P'
+        elif self.result in [key for key, _ in REJECTED_CHOICES]:
+            self.result_status = 'R'
+        else:
+            self.result_status = 'Y'
 
         super().save(*args, **kwargs)
 

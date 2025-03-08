@@ -368,6 +368,40 @@ h2.university-faculty-name{
   font-weight: bold;
   text-align: center;
 }
+
 .modal-content li {
     list-style: none;
+}
+
+/* カラム */
+.twocols {
+
+}
+
+.twocols-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px 25px;
+}
+
+@media (min-width: 900px) {
+    .twocols-container {
+        grid-template-columns: 5fr 5fr;
+    }
+}
+
+/* カラム内ボックス */
+.col div {
+    display: grid;
+    place-items: center;
+    height: clamp(200px,45vw,400px);
+    font-size: 50px;
+}
+
+.col:first-child div {
+    background:#F9CDE2;
+}
+
+.col:last-child div {
+    background:#FFDBAC;
 }
