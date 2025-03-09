@@ -76,7 +76,7 @@ h2.university-faculty-name{
 
 th, td {
     padding: 15px 30px;
-    font-size: 23px;
+    font-size: 20px;
     text-align: left;
     border: 2px, #c3c3c3, solid;
     border-collapse: collapse;
@@ -93,11 +93,11 @@ table {
 }
 
 .table-striped tr:nth-child(even) {
-    background-color: #e3e3e3;
+    background-color: #ededed;
 }
 
 .table-striped tr:nth-child(odd):hover {
-    background-color: #efefef;
+    background-color: #d3d3d3d3;
 }
 
 .table-striped tr:nth-child(even):hover {
