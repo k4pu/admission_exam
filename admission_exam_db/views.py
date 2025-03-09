@@ -432,5 +432,7 @@ def university_faculty_autocomplete(request):
 
 @login_required
 def user(request):
-    context = {}
+    context = {
+        'nbar': 'user',
+    }
     return render(request, 'admission_exam_db/user.html', context)

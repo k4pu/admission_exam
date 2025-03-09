@@ -25,7 +25,7 @@
                 <a href="{% url 'admission_exam_db:upload_user' %}" class="{% if nbar == 'upload_user' %}active{% endif %}">ユーザアップロード</a>
             {% endif %}
             {% if user.is_authenticated %}
-            <a href="{% url 'admission_exam_db:user' %}">{{ user.username }}</a>
+            <a href="{% url 'admission_exam_db:user' %}" class="{% if nbar == 'user' %}active{% endif %}">{{ user.username }}</a>
             {% else %}
                 <a href="{% url 'admission_exam_db:login' %}" class="{% if nbar == 'login' %}active{% endif %}">ログイン</a>
             {% endif %}
