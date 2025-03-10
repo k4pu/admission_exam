@@ -105,6 +105,7 @@ table {
 }
 
 input[type="number"],
+input[type="password"],
 input[type="text"] {
     font-family: inherit;
     font-size: inherit;
