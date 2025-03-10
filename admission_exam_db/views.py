@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.db.models import Q
 
 import csv
+import io
 import logging
 
 logger = logging.getLogger('django')
@@ -127,12 +128,9 @@ def upload_university_faculty(request):
 @user_passes_test(is_admin)
 def download_template_csv(request, file_kind):
     filename = f"{file_kind}_template.csv"
-    response = HttpResponse(
-        content_type="text/csv",
-        headers={"Content-Disposition": f'attachment; filename={filename}'},
-    )
 
-    writer = csv.writer(response)
+    output = io.StringIO()
+    writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
 
     if file_kind == "university_faculty":
         writer.writerow(["university_faculty_code", "university_name", "faculty_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"])
@@ -146,6 +144,16 @@ def download_template_csv(request, file_kind):
     elif file_kind == "student_admission_exam":
         writer.writerow(["student_admission_exam_id", "student_id", "university_faculty_code", "year_to_take", "preference", "result"])
         writer.writerow(["30", "1990123", "10001", "2025", "A1", "AE"])
+
+    # UTF-8-SIGにエンコード
+    csv_data = output.getvalue().encode("utf-8-sig")
+    output.close()
+
+    response = HttpResponse(
+        io.BytesIO(csv_data),
+        content_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename={filename}'},
+    )
     
     return response
 
@@ -181,8 +189,8 @@ def download_data_csv(request, file_kind):
 
     elif file_kind == "student_admission_exam_display":
         admission_exam_list = StudentAdmissionExam.objects.order_by("year_to_take", "student__homeroom_class", "student__attendance_number", "university_faculty__university_faculty_code")# TODO これはより良いorderがありそうなので考える
-        header_row = [["受験年", "組", "番", "氏名", "大学_学部", "結果詳細", "結果"]]
-        data_rows = [[exam.year_to_take, exam.student.homeroom_class, exam.student.attendance_number, exam.student.family_name + " " + exam.student.given_name, exam.university_faculty.display_name, exam.get_result_display(), exam.get_result_status_display()] for exam in admission_exam_list]
+        header_row = [["受験年", "組", "番", "氏名", "大学_学部", "結果詳細", "結果", "備考"]]
+        data_rows = [[exam.year_to_take, exam.student.homeroom_class, exam.student.attendance_number, exam.student.family_name + " " + exam.student.given_name, exam.university_faculty.display_name, exam.get_result_display(), exam.get_result_status_display(), exam.info] for exam in admission_exam_list]
 
     elif file_kind == "preference_choice":
         preference_correspondense_list = StudentAdmissionExam.PREFERENCE_CHOICES
@@ -195,10 +203,21 @@ def download_data_csv(request, file_kind):
         data_rows = [[code, label] for code, label in result_corespondence_list]
 
     write_rows = header_row + data_rows
-    pseudo_buffer = Echo()
-    writer = csv.writer(pseudo_buffer)
+
+    # csvデータを作成
+    output =io.StringIO()
+    writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
+    writer.writerows(write_rows)
+
+    # **UTF-8-SIG にエンコード BOM付きUTF-8
+    csv_data = output.getvalue().encode("utf-8-sig")
+    output.close()
+
+    # pseudo_buffer = Echo()
+    # writer = csv.writer(pseudo_buffer)
     return StreamingHttpResponse(
-        (writer.writerow(row) for row in write_rows),
+        # (writer.writerow(row) for row in write_rows),
+        io.BytesIO(csv_data),
         content_type="text/csv",
         headers={"Content-Disposition": f'attachment; filename={filename}'},
     )
