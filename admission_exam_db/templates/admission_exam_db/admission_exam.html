@@ -3,6 +3,7 @@
 {% block content %}
 {% if admission_exam_list %}
     <input type="number" id="exam-year-filterInput" placeholder="受験年度" class="filterInput">
+    <input type="number" id="graduation-year-filterInput" placeholder="卒業年" class="filterInput">
     <input type="text" id="university-name-filterInput" placeholder="大学名" class="filterInput">
     <input type="text" id="faculty-name-filterInput" placeholder="学部名" class="filterInput">
     <input type="text" id="student-name-filterInput" placeholder="氏名" class="filterInput">
@@ -76,6 +77,7 @@
         <thead>
             <tr>
                 <th>受験年度</th>
+                <th>卒業年</th>
                 <th>大学</th>
                 <th>学部</th>
                 <th>氏名</th>
@@ -86,6 +88,7 @@
             {% for admission_exam in admission_exam_list %}
             <tr onclick="window.location.href='{% url 'admission_exam_db:edit_student_admission_exam' student_id=admission_exam.student.student_id student_admission_exam_id=admission_exam.id %}';" style="cursor:pointer;">
                 <td class="exam_year">{{ admission_exam.year_to_take }}</td>
+                <td class="graduation_year">{{ admission_exam.student.graduation_year }}</td>
                 <td class="university">{{ admission_exam.university_faculty.university_name }}</td>
                 <td class="faculty">{{ admission_exam.university_faculty.faculty_name }}</td>
                 <td class="student_name">{{ admission_exam.student.family_name }} {{ admission_exam.student.given_name }}</td>
