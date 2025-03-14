@@ -52,7 +52,6 @@ class StudentAdmissionExam(models.Model):
     ]
     PASSED_CHOICES = [
         ('AE','合格（入学）'),
-        ('FASN','前期合格で後期受験せず'),
         ('AN','合格（入学せず）'),
         ('ASE','合格（特待、入学）'),
         ('ASN','合格（特待、入学せず）'),
@@ -64,6 +63,7 @@ class StudentAdmissionExam(models.Model):
     ]
     REJECTED_CHOICES = [
         ('R','不合格'),# Rejectedのつもりやったけど, Failedの方が自然やったみたい.更新しよか迷う.
+        ('FASN','前期合格で後期受験せず'),
         ('1A2N','1次合格2次受験せず'),
         ('1A2R','1次合格2次不合格'),
         ('1R','1次不合格'),

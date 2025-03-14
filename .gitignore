@@ -56,6 +56,7 @@ import_csv/
 
 # Djangoの設定
 *.log
+*.json
 *.pot
 *.pyc
 __pycache__/

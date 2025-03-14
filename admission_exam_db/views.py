@@ -33,7 +33,7 @@ def index(request):
 
 @login_required
 def student(request):
-    student_list = Student.objects.order_by("graduation_year", "homeroom_class", "attendance_number")
+    student_list = Student.objects.order_by("-graduation_year", "homeroom_class", "attendance_number")
     context ={
         'nbar': 'student',
         'student_list': student_list,
@@ -42,7 +42,7 @@ def student(request):
 
 @login_required
 def admission_exam(request):
-    admission_exam_list = StudentAdmissionExam.objects.order_by("university_faculty_id")
+    admission_exam_list = StudentAdmissionExam.objects.order_by("-year_to_take", "university_faculty_id")
     passed_choices = [ {"key":key, "value":value} for key, value in StudentAdmissionExam.PASSED_CHOICES ]
     rejected_choices = [ {"key":key, "value":value} for key, value in StudentAdmissionExam.REJECTED_CHOICES ]
     yet_choices = [ {"key":key, "value":value} for key, value in StudentAdmissionExam.YET_CHOICES ]
@@ -69,7 +69,7 @@ def student_detail(request, student_id):
         Q(homeroom_class=student.homeroom_class, attendance_number__gt=student.attendance_number)
     ).order_by('homeroom_class', 'attendance_number').first()
 
-    student_admission_exam_list = StudentAdmissionExam.objects.filter(student=student)
+    student_admission_exam_list = StudentAdmissionExam.objects.filter(student=student).order_by("-year_to_take", "university_faculty_id")
 
     context ={
         'nbar': 'student_detail',
@@ -167,6 +167,7 @@ class Echo:# https://docs.djangoproject.com/ja/5.1/howto/outputting-csv/より�
         return value# 受け取った値をそのまま返すのでメモリを消費しない
 
 @login_required
+@user_passes_test(is_editor)
 def download_data_csv(request, file_kind):
     filename = f"{file_kind}_data.csv"
 
