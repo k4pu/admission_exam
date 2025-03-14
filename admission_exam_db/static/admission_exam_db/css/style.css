@@ -104,6 +104,10 @@ table {
     background-color: #d3d3d3;
 }
 
+table.passed_exam_count_table td.university-name {
+  font-weight: bold;
+}
+
 input[type="number"],
 input[type="password"],
 input[type="text"] {
