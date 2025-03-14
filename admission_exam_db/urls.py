@@ -21,5 +21,6 @@ urlpatterns = [
     path("student/<int:student_id>/<int:student_admission_exam_id>", views.edit_student_admission_exam, name="edit_student_admission_exam"),
     path("student/<int:student_id>/<int:student_admission_exam_id>/delete", views.delete_student_admission_exam, name="delete_student_admission_exam"),
     path("admission_exam/", views.admission_exam, name="admission_exam"),
+    path("passed_exam_count/", views.passed_exam_count, name="passed_exam_count"),
     path("api/university_faculty", views.university_faculty_autocomplete, name="university_faculty_autocomplete"),
 ]

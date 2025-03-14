@@ -7,13 +7,15 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 
-from django.db.models import Q
+from django.db.models import Q, Count
 
 import csv
 import io
 import logging
+import datetime
 
 logger = logging.getLogger('django')
+
 
 def is_admin(user):
     return user.is_superuser
@@ -54,6 +56,30 @@ def admission_exam(request):
         'yet_choices': yet_choices,
     }
     return render(request, "admission_exam_db/admission_exam.html", context)
+
+@login_required
+def passed_exam_count(request):
+    # 今年の取得
+    dt = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=9))
+    )
+    exam_year = dt.year
+    university_faculty_list = UniversityFaculty.objects.annotate(passed_exam_count=Count("studentadmissionexam", filter=Q(studentadmissionexam__result_status="P"))).filter(passed_exam_count__gt=0).filter(studentadmissionexam__year_to_take=exam_year)# １対多の多側は小文字らしい
+    university_name_list = university_faculty_list.values("university_name").order_by("university_faculty_code")
+
+    university_list = {
+        university_name['university_name']: {}
+        for university_name in university_name_list
+    }
+
+    for faculty in university_faculty_list:
+        university_list[faculty.university_name][faculty.faculty_name] = faculty.passed_exam_count
+
+    context ={
+        'university_list': university_list,
+    }
+    return render(request, "admission_exam_db/passed_exam_count.html", context)
+
 
 @login_required
 def student_detail(request, student_id):
@@ -190,8 +216,8 @@ def download_data_csv(request, file_kind):
 
     elif file_kind == "student_admission_exam_display":
         admission_exam_list = StudentAdmissionExam.objects.order_by("year_to_take", "student__homeroom_class", "student__attendance_number", "university_faculty__university_faculty_code")# TODO これはより良いorderがありそうなので考える
-        header_row = [["受験年", "組", "番", "氏名", "大学_学部", "結果詳細", "結果", "備考"]]
-        data_rows = [[exam.year_to_take, exam.student.homeroom_class, exam.student.attendance_number, exam.student.family_name + " " + exam.student.given_name, exam.university_faculty.display_name, exam.get_result_display(), exam.get_result_status_display(), exam.info] for exam in admission_exam_list]
+        header_row = [["受験年", "卒業年", "組", "番", "氏名", "大学_学部", "結果詳細", "結果", "備考"]]
+        data_rows = [[exam.year_to_take, exam.student.graduation_year, exam.student.homeroom_class, exam.student.attendance_number, exam.student.family_name + " " + exam.student.given_name, exam.university_faculty.display_name, exam.get_result_display(), exam.get_result_status_display(), exam.info] for exam in admission_exam_list]
 
     elif file_kind == "preference_choice":
         preference_correspondense_list = StudentAdmissionExam.PREFERENCE_CHOICES

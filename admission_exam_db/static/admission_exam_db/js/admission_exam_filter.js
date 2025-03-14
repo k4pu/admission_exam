@@ -1,5 +1,6 @@
 function filterExams() {
     const yearFilter = document.getElementById('exam-year-filterInput').value;
+    const graduationYearFilter = document.getElementById('graduation-year-filterInput').value;
     const universityFilter = document.getElementById('university-name-filterInput').value.toLowerCase();
     const facultyFilter = document.getElementById('faculty-name-filterInput').value.toLowerCase();
     const studentNameFilter = document.getElementById('student-name-filterInput').value.toLowerCase();
@@ -16,6 +17,10 @@ function filterExams() {
         const yearText = yearCell ? yearCell.textContent.trim() : '';
         const yearMatches = yearFilter === '' || yearText.indexOf(String(yearFilter)) !== -1;
 
+        const graduationYearCell = row.querySelector('td.graduation_year');
+        const graduationYearText = graduationYearCell ? graduationYearCell.textContent.trim() : '';
+        const graduationYearMatches = graduationYearFilter === '' || graduationYearText.indexOf(String(graduationYearFilter)) !== -1;
+
         const universityText = row.querySelector('td.university').textContent.toLowerCase();
         const universityMatches = universityFilter === '' || universityText.includes(universityFilter);
 
@@ -28,12 +33,13 @@ function filterExams() {
         const resultText = row.querySelector('td.result').textContent;
         const resultMatches = selectedResults.has(resultText);
 
-        row.style.display = (yearMatches && universityMatches && facultyMatches && studentNameMatches && resultMatches) ? '' : 'none';
+        row.style.display = (yearMatches && graduationYearMatches && universityMatches && facultyMatches && studentNameMatches && resultMatches) ? '' : 'none';
         
     });
 }
 
 document.getElementById('exam-year-filterInput').addEventListener('input', filterExams);
+document.getElementById('graduation-year-filterInput').addEventListener('input', filterExams);
 document.getElementById('university-name-filterInput').addEventListener('input', filterExams);
 document.getElementById('faculty-name-filterInput').addEventListener('input', filterExams);
 document.getElementById('student-name-filterInput').addEventListener('input', filterExams);
