@@ -5,6 +5,12 @@
         <ul>
             <li><a href="{% url 'admission_exam_db:student' %}">生徒リスト</a></li>
             <li><a href="{% url 'admission_exam_db:admission_exam' %}">受験リスト</a></li>
+            <li><a href="{% url 'admission_exam_db:admission_exam' %}">受験リスト</a></li>
+            <li><a href="{% url 'admission_exam_db:passed_exam_count' %}">合格者数</a></li>
+            <li><a href="{% url 'admission_exam_db:download_data' %}">データダウンロード</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'admission_exam_db:user' %}" class="{% if nbar == 'user' %}active{% endif %}">{{ user.username }}</a></li>
+            {% endif %}
         </ul>
     </section>
 {% endblock %}
