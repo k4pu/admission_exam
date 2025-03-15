@@ -164,8 +164,8 @@ def download_template_csv(request, file_kind):
         writer.writerow(["university_faculty_code", "university_name", "faculty_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"])
         writer.writerow(["10001" ,"旭川医科" ,"医" ,"医－前" ,"旭川医科_医_医－前" ,"医・歯・薬・保健" ,"5101" ,"医"])
     elif file_kind == "student":
-        writer.writerow(["student_id", "homeroom_class", "attendance_number", "family_name", "given_name", "family_name_kana", "given_name_kana", "graduation_year"])
-        writer.writerow(["1900123", "A", "01", "昭和", "秀太", "しょうわ", "しゅうた", "2025"])
+        writer.writerow(["student_id", "homeroom_class", "attendance_number", "gender", "family_name", "given_name", "family_name_kana", "given_name_kana", "graduation_year"])
+        writer.writerow(["1900123", "A", "01", "M", "昭和", "秀太", "しょうわ", "しゅうた", "2025"])
     elif file_kind == "user":
         writer.writerow(["username", "password", "email"])
         writer.writerow(["test", "testpass", "test@showa-shuei.ed.jp"])
@@ -202,8 +202,8 @@ def download_data_csv(request, file_kind):
     if file_kind == "student":
         student_list = Student.objects.order_by("homeroom_class", "attendance_number")
 
-        header_row = [["student_id", "homeroom_class", "attendance_number", "family_name", "given_name", "family_name_kana", "given_name_kana"]]
-        data_rows = [[student.student_id, student.homeroom_class, student.attendance_number, student.family_name, student.given_name, student.family_name_kana, student.given_name_kana] for student in student_list]
+        header_row = [["student_id", "homeroom_class", "attendance_number", "gender", "family_name", "given_name", "family_name_kana", "given_name_kana", "graduation_year"]]
+        data_rows = [[student.student_id, student.homeroom_class, student.attendance_number, student.gender, student.family_name, student.given_name, student.family_name_kana, student.given_name_kana, student.graduation_year] for student in student_list]
 
     elif file_kind == "university_faculty":
         faculty_list = UniversityFaculty.objects.order_by("university_faculty_code")
@@ -271,6 +271,7 @@ def upload_student(request):
                 student_id = row['student_id']
                 homeroom_class = row['homeroom_class']
                 attendance_number = row['attendance_number']
+                gender = row['gender']
                 family_name = row['family_name']
                 given_name = row['given_name']
                 family_name_kana = row['family_name_kana']
@@ -283,6 +284,7 @@ def upload_student(request):
                     defaults={
                         'homeroom_class': homeroom_class,
                         'attendance_number': attendance_number,
+                        'gender': gender,
                         'family_name': family_name,
                         'given_name': given_name,
                         'family_name_kana': family_name_kana,

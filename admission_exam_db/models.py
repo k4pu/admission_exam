@@ -15,6 +15,15 @@ class Student(models.Model):
     family_name_kana = models.CharField(max_length=30)
     given_name_kana = models.CharField(max_length=30)
     graduation_year = models.CharField(max_length=4)
+    gender = models.CharField( # 志望
+        max_length=1,
+        choices=[
+            ('M', '男性'),
+            ('F', '女性')
+        ],
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return " ".join([self.family_name, self.given_name])
