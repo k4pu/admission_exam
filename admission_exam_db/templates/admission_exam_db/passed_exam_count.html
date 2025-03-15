@@ -1,37 +1,41 @@
 {% extends 'admission_exam_db/base.html' %}
 {% block title %}合格者数{% endblock %}
 {% block content %}
-    <h2>受験年度</h2>
-    <table class="passed_exam_count_table table table-bordered table-hover" border="3">
-        <thead>
-            <tr>
-                <th>大学</th>
-                <th>学部</th>
-                <th>合格者数</th>
-            </tr>
-        </thead>
-        <tbody>
         {% load custom_tags %}
-        {% for university in university_list.keys %}
-            {% with university_data=university_list|get_value:university %}
-                {% for faculty in university_data.keys %}
-                    {% if forloop.first %}
+        {% for year in passed_exam_count_table.keys %}
+        <h2>{{ year }}年度</h2>
+            <table class="passed_exam_count_table table table-bordered table-hover" border="3">
+                <thead>
                     <tr>
-                        <td rowspan="{{ university_data|get_length }}" class="university-name">{{ university }}</td>
-                        <td>{{ faculty }}</td>
-                        <td>{{ university_data|get_value:faculty }}名</td>
+                        <th>大学</th>
+                        <th>学部</th>
+                        <th>合格者数</th>
                     </tr>
-                    {% else %}
-                    <tr>
-                        <td>{{ faculty }}</td>
-                        <td>{{ university_data|get_value:faculty }}名</td>
-                    </tr>
-                    {% endif %}
-                {% endfor %}
-            {% endwith %}
+                </thead>
+                <tbody>
+                {% with university_list=passed_exam_count_table|get_value:year %}
+                    {% for university in university_list.keys %}
+                        {% with university_data=university_list|get_value:university %}
+                            {% for faculty in university_data.keys %}
+                                {% if forloop.first %}
+                                <tr>
+                                    <td rowspan="{{ university_data|get_length }}" class="university-name">{{ university }}</td>
+                                    <td>{{ faculty }}</td>
+                                    <td>{{ university_data|get_value:faculty }}名</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td>{{ faculty }}</td>
+                                    <td>{{ university_data|get_value:faculty }}名</td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        {% endwith %}
+                    {% endfor %}
+                {% endwith %}
+                </tbody>
+            </table>
         {% endfor %}
-        </tbody>
-    </table>
 {% endblock %}
 
 
