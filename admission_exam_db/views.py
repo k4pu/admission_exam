@@ -59,12 +59,8 @@ def admission_exam(request):
 
 @login_required
 def passed_exam_count(request):
-    # 今年の取得
-    dt = datetime.datetime.now(
-        datetime.timezone(datetime.timedelta(hours=9))
-    )
-    exam_year = dt.year
-    university_faculty_list = UniversityFaculty.objects.annotate(passed_exam_count=Count("studentadmissionexam", filter=Q(studentadmissionexam__result_status="P"))).filter(passed_exam_count__gt=0).filter(studentadmissionexam__year_to_take=exam_year)# １対多の多側は小文字らしい
+    years_of_admission_exam = StudentAdmissionExam.objects.values("year_to_take")
+    university_faculty_list = UniversityFaculty.objects.values("studentadmissionexam__year_to_take", "university_name", "faculty_name").annotate(passed_exam_count=Count("studentadmissionexam", filter=Q(studentadmissionexam__result_status="P"))).filter(passed_exam_count__gt=0)# １対多の多側は小文字らしい. まだ年ごとの集計ではない
     university_name_list = university_faculty_list.values("university_name").order_by("university_faculty_code")
 
     university_list = {
@@ -73,7 +69,7 @@ def passed_exam_count(request):
     }
 
     for faculty in university_faculty_list:
-        university_list[faculty.university_name][faculty.faculty_name] = faculty.passed_exam_count
+        university_list[faculty["university_name"]][faculty["faculty_name"]] = faculty["passed_exam_count"]
 
     context ={
         'university_list': university_list,
