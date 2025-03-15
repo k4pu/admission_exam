@@ -59,20 +59,25 @@ def admission_exam(request):
 
 @login_required
 def passed_exam_count(request):
-    years_of_admission_exam = StudentAdmissionExam.objects.values("year_to_take")
-    university_faculty_list = UniversityFaculty.objects.values("studentadmissionexam__year_to_take", "university_name", "faculty_name").annotate(passed_exam_count=Count("studentadmissionexam", filter=Q(studentadmissionexam__result_status="P"))).filter(passed_exam_count__gt=0)# １対多の多側は小文字らしい. まだ年ごとの集計ではない
-    university_name_list = university_faculty_list.values("university_name").order_by("university_faculty_code")
-
-    university_list = {
-        university_name['university_name']: {}
-        for university_name in university_name_list
+    student_admission_exam = StudentAdmissionExam.objects.filter(result_status="P").all()
+    years = sorted(list({ dic["year_to_take"] for dic in student_admission_exam.values("year_to_take") }), reverse=True)
+    passed_exam_count_table = {
+        year: {}
+        for year in years
     }
 
-    for faculty in university_faculty_list:
-        university_list[faculty["university_name"]][faculty["faculty_name"]] = faculty["passed_exam_count"]
+    for year in years:
+        university_faculty_list = UniversityFaculty.objects.filter(studentadmissionexam__year_to_take=year).values("studentadmissionexam__year_to_take", "university_name", "faculty_name").annotate(passed_exam_count=Count("studentadmissionexam")).filter(passed_exam_count__gt=0)# １対多の多側は小文字らしい.
+        university_name_list = university_faculty_list.values("university_name").order_by("university_faculty_code")
+        passed_exam_count_table[year] = {
+            university_name['university_name']: {}
+            for university_name in university_name_list
+        }
+        for faculty in university_faculty_list:
+            passed_exam_count_table[year][faculty["university_name"]][faculty["faculty_name"]] = faculty["passed_exam_count"]
 
     context ={
-        'university_list': university_list,
+        'passed_exam_count_table': passed_exam_count_table,
     }
     return render(request, "admission_exam_db/passed_exam_count.html", context)
 
