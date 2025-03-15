@@ -78,6 +78,7 @@ def passed_exam_count(request):
 
     context ={
         'passed_exam_count_table': passed_exam_count_table,
+        'nbar': 'passed_exam_count',
     }
     return render(request, "admission_exam_db/passed_exam_count.html", context)
 
