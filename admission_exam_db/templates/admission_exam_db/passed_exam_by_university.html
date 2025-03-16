@@ -1,0 +1,32 @@
+{% extends 'admission_exam_db/base.html' %}
+{% block title %}受験一覧{% endblock %}
+{% block content %}
+{% if admission_exam_list %}
+    <a href="{% url 'admission_exam_db:passed_exam_count' %}" class="Page-Btn">戻る</a>
+    <h2>{{ exam_year }}年度 {{ university }}大学 合格者</h2>
+    <table class="admission_exam_table table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>学部</th>
+                <th>卒業年</th>
+                <th>氏名</th>
+                <th>結果</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for admission_exam in admission_exam_list %}
+            <tr onclick="window.location.href='{% url 'admission_exam_db:edit_student_admission_exam' student_id=admission_exam.student.student_id student_admission_exam_id=admission_exam.id %}';" style="cursor:pointer;">
+                <td class="faculty">{{ admission_exam.university_faculty.faculty_name }}</td>
+                <td class="graduation_year">{{ admission_exam.student.graduation_year }}</td>
+                <td class="student_name">{{ admission_exam.student.family_name }} {{ admission_exam.student.given_name }}</td>
+                <td class="result">{{ admission_exam.get_result_display }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No admission_exam data are available.</p>
+{% endif %}
+{% endblock %}
+
+

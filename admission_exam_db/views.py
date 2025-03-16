@@ -82,6 +82,16 @@ def passed_exam_count(request):
     }
     return render(request, "admission_exam_db/passed_exam_count.html", context)
 
+@login_required
+def passed_exam_by_university(request, exam_year, university):
+    admission_exam_list = StudentAdmissionExam.objects.filter(university_faculty__university_name=university, year_to_take=exam_year).order_by("university_faculty__university_faculty_code", "-student__graduation_year")
+    context ={
+        'nbar': 'passed_exam_count',
+        'exam_year': exam_year,
+        'university': university,
+        'admission_exam_list': admission_exam_list,
+    }
+    return render(request, "admission_exam_db/passed_exam_by_university.html", context)
 
 @login_required
 def student_detail(request, student_id):
