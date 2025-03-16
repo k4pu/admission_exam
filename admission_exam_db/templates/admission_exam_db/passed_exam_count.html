@@ -21,12 +21,24 @@
                                 <tr onclick="window.location.href='{% url "admission_exam_db:passed_exam_by_university" exam_year=year university=university %}';" style="cursor:pointer;">
                                     <td rowspan="{{ university_data|get_length }}" class="university-name">{{ university }}</td>
                                     <td>{{ faculty }}</td>
-                                    <td>{{ university_data|get_value:faculty }}名</td>
+                                    {% with count_list=university_data|get_value:faculty %}
+                                    {% if count_list|get_value:'graduates' > 0 %}
+                                    <td>{{ count_list|get_value:'total' }}名（内浪人生 {{ count_list|get_value:'graduates' }}名）</td>
+                                    {% else %}
+                                    <td>{{ count_list|get_value:'total' }}名</td>
+                                    {% endif %}
+                                    {% endwith %}
                                 </tr>
                                 {% else %}
                                 <tr onclick="window.location.href='{% url "admission_exam_db:passed_exam_by_university" exam_year=year university=university %}';" style="cursor:pointer;">
                                     <td>{{ faculty }}</td>
-                                    <td>{{ university_data|get_value:faculty }}名</td>
+                                    {% with count_list=university_data|get_value:faculty %}
+                                    {% if count_list|get_value:'graduates' > 0 %}
+                                    <td>{{ count_list|get_value:'total' }}名（内浪人生 {{ count_list|get_value:'graduates' }}名）</td>
+                                    {% else %}
+                                    <td>{{ count_list|get_value:'total' }}名</td>
+                                    {% endif %}
+                                    {% endwith %}
                                 </tr>
                                 {% endif %}
                             {% endfor %}

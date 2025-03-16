@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 
-from django.db.models import Q, Count
+from django.db.models import Q, F, Count
 
 import csv
 import io
@@ -67,14 +67,14 @@ def passed_exam_count(request):
     }
 
     for year in years:
-        university_faculty_list = UniversityFaculty.objects.filter(studentadmissionexam__year_to_take=year).values("studentadmissionexam__year_to_take", "university_name", "faculty_name").annotate(passed_exam_count=Count("studentadmissionexam")).filter(passed_exam_count__gt=0)# １対多の多側は小文字らしい.
+        university_faculty_list = UniversityFaculty.objects.filter(studentadmissionexam__year_to_take=year).values("studentadmissionexam__year_to_take", "university_name", "faculty_name").annotate(passed_exam_count=Count("studentadmissionexam", distinct=True), passed_exam_count_by_graduates=Count("studentadmissionexam", filter=Q(studentadmissionexam__student__graduation_year__lt=F("studentadmissionexam__year_to_take")), distinct=True)).filter(passed_exam_count__gt=0)# １対多の多側は小文字らしい.
         university_name_list = university_faculty_list.values("university_name").order_by("university_faculty_code")
         passed_exam_count_table[year] = {
             university_name['university_name']: {}
             for university_name in university_name_list
         }
         for faculty in university_faculty_list:
-            passed_exam_count_table[year][faculty["university_name"]][faculty["faculty_name"]] = faculty["passed_exam_count"]
+            passed_exam_count_table[year][faculty["university_name"]][faculty["faculty_name"]] = {'total':faculty["passed_exam_count"], 'graduates':faculty["passed_exam_count_by_graduates"]}
 
     context ={
         'passed_exam_count_table': passed_exam_count_table,
