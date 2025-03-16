@@ -18,13 +18,13 @@
                         {% with university_data=university_list|get_value:university %}
                             {% for faculty in university_data.keys %}
                                 {% if forloop.first %}
-                                <tr>
+                                <tr onclick="window.location.href='{% url "admission_exam_db:passed_exam_by_university" exam_year=year university=university %}';" style="cursor:pointer;">
                                     <td rowspan="{{ university_data|get_length }}" class="university-name">{{ university }}</td>
                                     <td>{{ faculty }}</td>
                                     <td>{{ university_data|get_value:faculty }}名</td>
                                 </tr>
                                 {% else %}
-                                <tr>
+                                <tr onclick="window.location.href='{% url "admission_exam_db:passed_exam_by_university" exam_year=year university=university %}';" style="cursor:pointer;">
                                     <td>{{ faculty }}</td>
                                     <td>{{ university_data|get_value:faculty }}名</td>
                                 </tr>
