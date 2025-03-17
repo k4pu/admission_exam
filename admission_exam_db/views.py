@@ -67,7 +67,7 @@ def passed_exam_count(request):
     }
 
     for year in years:
-        university_faculty_list = UniversityFaculty.objects.filter(studentadmissionexam__year_to_take=year).values("studentadmissionexam__year_to_take", "university_name", "faculty_name").annotate(passed_exam_count=Count("studentadmissionexam", distinct=True), passed_exam_count_by_graduates=Count("studentadmissionexam", filter=Q(studentadmissionexam__student__graduation_year__lt=F("studentadmissionexam__year_to_take")), distinct=True)).filter(passed_exam_count__gt=0)# １対多の多側は小文字らしい.
+        university_faculty_list = UniversityFaculty.objects.filter(studentadmissionexam__year_to_take=year, studentadmissionexam__result_status="P").values("studentadmissionexam__year_to_take", "university_name", "faculty_name").annotate(passed_exam_count=Count("studentadmissionexam", distinct=True), passed_exam_count_by_graduates=Count("studentadmissionexam", filter=Q(studentadmissionexam__student__graduation_year__lt=F("studentadmissionexam__year_to_take")), distinct=True)).filter(passed_exam_count__gt=0)# １対多の多側は小文字らしい.
         university_name_list = university_faculty_list.values("university_name").order_by("university_faculty_code")
         passed_exam_count_table[year] = {
             university_name['university_name']: {}
@@ -84,7 +84,7 @@ def passed_exam_count(request):
 
 @login_required
 def passed_exam_by_university(request, exam_year, university):
-    admission_exam_list = StudentAdmissionExam.objects.filter(university_faculty__university_name=university, year_to_take=exam_year).order_by("university_faculty__university_faculty_code", "-student__graduation_year")
+    admission_exam_list = StudentAdmissionExam.objects.filter(university_faculty__university_name=university, year_to_take=exam_year, result_status="P").order_by("university_faculty__university_faculty_code", "-student__graduation_year")
     context ={
         'nbar': 'passed_exam_count',
         'exam_year': exam_year,
