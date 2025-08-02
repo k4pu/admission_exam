@@ -23,6 +23,9 @@ dist/
 target/
 dist/
 
+# VScode
+.vscode/
+
 # JetBrains IDE
 .idea/
 
@@ -55,7 +58,6 @@ Thumbs.db
 import_csv/
 
 # Djangoの設定
-*.log
 *.json
 *.pot
 *.pyc

@@ -175,10 +175,10 @@ def download_template_csv(request, file_kind):
         writer.writerow(["10001" ,"旭川医科" ,"医" ,"医－前" ,"旭川医科_医_医－前" ,"医・歯・薬・保健" ,"5101" ,"医"])
     elif file_kind == "student":
         writer.writerow(["student_id", "homeroom_class", "attendance_number", "gender", "family_name", "given_name", "family_name_kana", "given_name_kana", "graduation_year"])
-        writer.writerow(["1900123", "A", "01", "M", "昭和", "秀太", "しょうわ", "しゅうた", "2025"])
+        writer.writerow(["1900123", "A", "01", "M", "佐藤", "花子", "さとう", "はなこ", "2025"])
     elif file_kind == "user":
         writer.writerow(["username", "password", "email"])
-        writer.writerow(["test", "testpass", "test@showa-shuei.ed.jp"])
+        writer.writerow(["test", "testpass", "test@example.ed.jp"])
     elif file_kind == "student_admission_exam":
         writer.writerow(["student_admission_exam_id", "student_id", "university_faculty_code", "year_to_take", "preference", "result"])
         writer.writerow(["30", "1990123", "10001", "2025", "A1", "AE"])
