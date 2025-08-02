@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-cezhqfin#w(qljrm6*=7d66q$%9#4dj*96(t=vk_&w=98kqj_4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', "False").lower() == "true"
 
 ALLOWED_HOSTS = [
     os.getenv('HOST_PRIVATE_IP'),
@@ -177,13 +177,16 @@ LOGGING = {
 # DebugToolbar用
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
-    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
-INTERNAL_IPS = [
-    '127.0.0.1',
-    '172.18.0.1',
-]
-DEBUG_TOOLBAR_CONFIG = {
-    # ツールバーを表示させる
-    "SHOW_TOOLBAR_CALLBACK" : lambda request: True,
-    "INTERCEPT_REDIREDTS": False,
-}
+    MIDDLEWARE = [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+        *MIDDLEWARE,
+    ]
+    DEBUG_TOOLBAR_CONFIG = {
+        # ツールバーを表示させる
+        "SHOW_TOOLBAR_CALLBACK" : lambda request: True,
+        "INTERCEPT_REDIREDTS": False,
+    }
+    INTERNAL_IPS = [
+        '127.0.0.1',
+        '172.18.0.1',
+    ]

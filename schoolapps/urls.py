@@ -20,11 +20,19 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from debug_toolbar.toolbar import debug_toolbar_urls
+# envファイル読み込み用
+from dotenv import load_dotenv
+load_dotenv()# .envファイル読み込み
+import os
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('admission_exam_db/', include("admission_exam_db.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)\
-  + debug_toolbar_urls()
 
+if settings.DEBUG:
+    from debug_toolbar.toolbar import debug_toolbar_urls
+    urlpatterns = [
+        *urlpatterns,
+    ] + debug_toolbar_urls()
