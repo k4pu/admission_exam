@@ -83,7 +83,7 @@ systemctl start docker
 ```bash
 # リポジトリをクローン
 git clone **???**
-cd student_admission_exam_db
+cd admission_exam_db
 
 # 以降のコマンドはstudent_admission_exam_dbディレクトリで実行してください.
 
