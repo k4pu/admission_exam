@@ -71,27 +71,37 @@
 ## 📦 セットアップ方法
 
 以下の手順で開発・テスト環境を構築できます.
+- 事前にDockerデーモンは起動しておいてください. 
+- docker-composeも必要です.
+- コマンドを列挙していますが, 環境によっては`docker`や`docker-compose`には`sudo`が必要です.
+
+```bash
+systemctl start docker
+```
+など.
 
 ```bash
 # リポジトリをクローン
 git clone **???**
 cd student_admission_exam_db
 
+# 以降のコマンドはstudent_admission_exam_dbディレクトリで実行してください.
+
 # logファイルの作成
-touch log/{nginx, gunicorn, django}/{access.log error.log}
+touch ./log/{nginx, gunicorn, django}/{access.log error.log}
 
 # .envファイルを作成
-cp .env.example .env  # 編集が必要
+cp .env.sample .env  # 編集が必要
 # この時点で.envファイルを編集し, ホストが所属するネットワーク（受験情報データベースシステムを公開するネットワーク）のプライベートIPアドレスをHOST_PRIVATE_IPに記述してください.
 
 # Dockerコンテナ起動
 docker-compose up --build -d
 
 # マイグレーション
-docker-compose exec web python3 manage.py makemigrations && docker-compose exec web python3 manage.py makemigrations
+docker-compose exec web python3 manage.py makemigrations && docker-compose exec web python3 manage.py migrate
 
 # サンプルデータのロード
-cp /fixtures/sample_data.json.sample /fixtures/sample_data.json
+cp ./fixtures/sample_data.json.sample ./fixtures/sample_data.json
 docker-compose exec web python3 manage.py loaddata fixtures/sample.json
 ```
 
