@@ -96,9 +96,9 @@ docker-compose exec web python3 manage.py loaddata fixtures/sample.json
 ```
 
 Dockerコンテナ起動後は
-- ブラウザで`http://localhost/admission_exam_db/`からアクセスできます.
-- Django adminページには`http://localhost/admin/`からアクセスできます.
-- ホストと同ネットワークに所属するノードからは`http://{ホストのプライベートIP}/admission_exam_db/`からアクセス可能です.
+- ブラウザで[http://localhost/admission_exam_db/](http://localhost/admission_exam_db/)からアクセスできます.
+- Django adminページには[http://localhost/admin/](http://localhost/admin/)からアクセスできます.
+- ホストと同ネットワークに所属するノードからは[http://{ホストのプライベートIP}/admission_exam_db/](http://{ホストのプライベートIP}/admission_exam_db/)からアクセス可能です.
 - サンプルアカウント一覧
     - adminアカウント:
         - ID: root
@@ -114,7 +114,7 @@ Dockerコンテナ起動後は
 
 ## 🤖 仕様
 
-- ユーザ関連の設定（editorグループに所属させるなど）は現状`http://localhost/admin/`のみから可能です.
+- ユーザ関連の設定（editorグループに所属させるなど）は現状[http://localhost/admin/](http://localhost/admin/)のみから可能です.
 - 大学・学部モデルと生徒モデルの連関エンティティとして受験情報モデルを用意したので浪人して同じ学部に再受験しても登録対応可能です. 大袈裟ですが第３正規化です.
 - 主に学部データ対応ですが, データが巨大になるのでStreamingHttpResponseを利用しています.
 - `docker-compose up` でデータベースサーバ用のコンテナ`db`, アプリケーションサーバ用のコンテナ`web`, リバースプロキシ用のコンテナ`nginx`が起動します.
