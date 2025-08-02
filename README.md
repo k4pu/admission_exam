@@ -102,7 +102,7 @@ docker-compose exec web python3 manage.py makemigrations && docker-compose exec 
 
 # サンプルデータのロード
 cp ./fixtures/sample_data.json.sample ./fixtures/sample_data.json
-docker-compose exec web python3 manage.py loaddata fixtures/sample.json
+docker-compose exec web python3 manage.py loaddata fixtures/sample_data.json
 ```
 
 Dockerコンテナ起動後は
