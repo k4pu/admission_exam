@@ -126,8 +126,10 @@ class StudentAdmissionExam(models.Model):
             self.result_status = 'P'
         elif self.result in [key for key, _ in self.REJECTED_CHOICES]:
             self.result_status = 'R'
-        else:
+        elif self.result in [key for key, _ in self.YET_CHOICES]:
             self.result_status = 'Y'
+        else:
+            pass # Exceptionをthrowした方が良さそう
 
         super().save(*args, **kwargs)
 
