@@ -79,15 +79,7 @@ class StudentAdmissionExamModelTest(TestCase):
         self.student = create_student()
         self.university_faculty = create_university_faculty()
 
-    def test_student_admission_exam_str(self):
-        """__str__メソッドの表示のテスト"""
-        self.student_admission_exam = create_student_admission_exam(student=self.student, university_faculty=self.university_faculty)
-        self.assertEqual(str(self.student_admission_exam), " ".join([self.student.family_name, self.student.given_name]) + ": " + self.university_faculty.display_name)
-        
-    def test_from_result_to_result_status_P(self):
-        """resultからresult_statusが正しくPに設定されるかのテスト"""
-        choices = StudentAdmissionExam.PASSED_CHOICES
-
+    def result_status_test(self, choices, status):
         result_flag = True
         for choice in choices:
             self.student_admission_exam = create_student_admission_exam(
@@ -95,36 +87,29 @@ class StudentAdmissionExamModelTest(TestCase):
                     university_faculty=self.university_faculty,
                     result=choice[0]
                 )
-            if self.student_admission_exam.result_status != "P":
+            if self.student_admission_exam.result_status != status:
                 result_flag = False
         self.assertIs(result_flag, True)
+
+    def test_student_admission_exam_str(self):
+        """__str__メソッドの表示のテスト"""
+        self.student_admission_exam = create_student_admission_exam(student=self.student, university_faculty=self.university_faculty)
+        self.assertEqual(str(self.student_admission_exam), " ".join([self.student.family_name, self.student.given_name]) + ": " + self.university_faculty.display_name)
+
+    def test_from_result_to_result_status_P(self):
+        """resultからresult_statusが正しくPに設定されるかのテスト"""
+        choices = StudentAdmissionExam.PASSED_CHOICES
+
+        self.result_status_test(choices, "P")
 
     def test_from_result_to_result_status_R(self):
         """resultからresult_statusが正しくRに設定されるかのテスト"""
         choices = StudentAdmissionExam.REJECTED_CHOICES
 
-        result_flag = True
-        for choice in choices:
-            self.student_admission_exam = create_student_admission_exam(
-                    student=self.student,
-                    university_faculty=self.university_faculty,
-                    result=choice[0]
-                )
-            if self.student_admission_exam.result_status != "R":
-                result_flag = False
-        self.assertIs(result_flag, True)
+        self.result_status_test(choices, "R")
 
     def test_from_result_to_result_status_Y(self):
         """resultからresult_statusが正しくYに設定されるかのテスト"""
         choices = StudentAdmissionExam.YET_CHOICES
 
-        result_flag = True
-        for choice in choices:
-            self.student_admission_exam = create_student_admission_exam(
-                    student=self.student,
-                    university_faculty=self.university_faculty,
-                    result=choice[0]
-                )
-            if self.student_admission_exam.result_status != "Y":
-                result_flag = False
-        self.assertIs(result_flag, True)
+        self.result_status_test(choices, "Y")
