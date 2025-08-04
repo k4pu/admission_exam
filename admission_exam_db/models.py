@@ -33,7 +33,7 @@ class UniversityFaculty(models.Model):
     university_name = models.CharField(max_length=20)  # 大学短縮名
     faculty_name = models.CharField(max_length=20) # 学部短縮名
     department_name = models.CharField(max_length=20) # 学科短縮名
-    display_name = models.CharField(max_length=50) # 秀英用表示名
+    display_name = models.CharField(max_length=50) # 表示名
     faculty_system_midstream_name = models.CharField(max_length=20) # 学部系統(中系統)名称
     faculty_system_field_code = models.CharField(max_length=4) # 学部系統(分野)コード
     faculty_system_field_name = models.CharField(max_length=20) # 学部系統(分野)名称
