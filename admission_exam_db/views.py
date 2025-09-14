@@ -163,7 +163,6 @@ def upload_university_faculty(request):
     return render(request, 'admission_exam_db/upload_university_faculty.html', context)
 
 @login_required
-@user_passes_test(is_admin)
 def download_template_csv(request, file_kind):
     filename = f"{file_kind}_template.csv"
 
