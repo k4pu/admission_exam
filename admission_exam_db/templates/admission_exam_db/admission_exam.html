@@ -86,7 +86,7 @@
         </thead>
         <tbody>
             {% for admission_exam in admission_exam_list %}
-            <tr onclick="window.location.href='{% url 'admission_exam_db:edit_student_admission_exam' student_id=admission_exam.student.student_id student_admission_exam_id=admission_exam.id %}';" style="cursor:pointer;">
+            <tr onclick="window.location.href='{% url 'admission_exam_db:student_detail' student_id=admission_exam.student.student_id %}';" style="cursor:pointer;">
                 <td class="exam_year">{{ admission_exam.year_to_take }}</td>
                 <td class="graduation_year">{{ admission_exam.student.graduation_year }}</td>
                 <td class="university">{{ admission_exam.university_faculty.university_name }}</td>
