@@ -67,13 +67,9 @@ class UniversityFacultyNew(models.Model):
 
 class StudentAdmissionExam(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE)
-    university_faculty_new = models.ForeignKey(
+    university_faculty = models.ForeignKey(
         UniversityFacultyNew,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name='+',
     )
     year_to_take = models.CharField(max_length=4)
     PREFERENCE_CHOICES = [
