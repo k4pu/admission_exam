@@ -41,9 +41,40 @@ class UniversityFaculty(models.Model):
     def __str__(self):
         return self.display_name
 
+class UniversityFacultyNew(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    year = models.CharField(max_length=4, null=True, blank=True)# TODO 移行後にnull, blankはfalseにする
+    university_faculty_code = models.CharField(max_length=5)# 記入用大学コード(５桁)
+    university_name = models.CharField(max_length=20)  # 大学短縮名
+    faculty_name = models.CharField(max_length=20) # 学部短縮名
+    department_name = models.CharField(max_length=20) # 学科短縮名
+    display_name = models.CharField(max_length=50) # 表示名
+    faculty_system_midstream_name = models.CharField(max_length=20) # 学部系統(中系統)名称
+    faculty_system_field_code = models.CharField(max_length=4) # 学部系統(分野)コード
+    faculty_system_field_name = models.CharField(max_length=20) # 学部系統(分野)名称
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['year', 'university_faculty_code'],
+                name='uniq_year_faculty_code',
+            ),
+        ]
+
+    def __str__(self):
+        return self.display_name
+
+
 class StudentAdmissionExam(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE)
+    university_faculty_new = models.ForeignKey(
+        UniversityFacultyNew,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='+',
+    )
     year_to_take = models.CharField(max_length=4)
     PREFERENCE_CHOICES = [
         ('A1','受かったら必ず入学する第1志望'),
