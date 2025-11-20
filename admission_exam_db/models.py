@@ -7,7 +7,7 @@ logger = logging.getLogger('django')
 
 
 class Student(models.Model):
-    student_id = models.CharField(max_length=7, primary_key=True)
+    student_id = models.CharField(max_length=7, primary_key=True)# TODO student_idよりidのほうが良かったなあ
     homeroom_class = models.CharField(max_length=1)
     attendance_number = models.CharField(max_length=2)
     family_name = models.CharField(max_length=30)
@@ -30,7 +30,7 @@ class Student(models.Model):
 
 class UniversityFaculty(models.Model):
     id = models.BigAutoField(primary_key=True)
-    year = models.CharField(max_length=4, null=True, blank=True)# TODO 移行後にnull, blankはfalseにする
+    year = models.CharField(max_length=4)
     university_faculty_code = models.CharField(max_length=5)# 記入用大学コード(５桁)
     university_name = models.CharField(max_length=20)  # 大学短縮名
     faculty_name = models.CharField(max_length=20) # 学部短縮名
@@ -51,6 +51,11 @@ class UniversityFaculty(models.Model):
     def __str__(self):
         return self.display_name
 
+class UniversityFacultyYearlyCode(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE)
+    year = models.CharField(max_length=4)
+    university_faculty_code = models.CharField(max_length=5)# 記入用大学コード(５桁)
 
 class StudentAdmissionExam(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
