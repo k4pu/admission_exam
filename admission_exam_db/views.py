@@ -217,8 +217,8 @@ def download_data_csv(request, file_kind):
     elif file_kind == "university_faculty":
         faculty_list = UniversityFaculty.objects.order_by("university_faculty_code")
 
-        header_row = [["university_faculty_code", "university_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_code"]]
-        data_rows = [[faculty.university_faculty_code, faculty.university_name, faculty.department_name, faculty.display_name, faculty.faculty_system_midstream_name, faculty.faculty_system_midstream_name, faculty.faculty_system_field_code, faculty.faculty_system_field_code] for faculty in faculty_list]
+        header_row = [["id", "year", "university_faculty_code", "university_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_code"]]
+        data_rows = [[faculty.id, faculty.year, faculty.university_faculty_code, faculty.university_name, faculty.department_name, faculty.display_name, faculty.faculty_system_midstream_name, faculty.faculty_system_midstream_name, faculty.faculty_system_field_code, faculty.faculty_system_field_code] for faculty in faculty_list]
 
     elif file_kind == "student_admission_exam":
         admission_exam_list = StudentAdmissionExam.objects.order_by("id")# TODO これはより良いorderがありそうなので考える
