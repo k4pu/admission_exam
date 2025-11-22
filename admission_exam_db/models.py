@@ -30,8 +30,6 @@ class Student(models.Model):
 
 class UniversityFaculty(models.Model):
     id = models.BigAutoField(primary_key=True)
-    year = models.CharField(max_length=4)
-    university_faculty_code = models.CharField(max_length=5)# 記入用大学コード(５桁)
     university_name = models.CharField(max_length=20)  # 大学短縮名
     faculty_name = models.CharField(max_length=20) # 学部短縮名
     department_name = models.CharField(max_length=20) # 学科短縮名
@@ -39,6 +37,16 @@ class UniversityFaculty(models.Model):
     faculty_system_midstream_name = models.CharField(max_length=20) # 学部系統(中系統)名称
     faculty_system_field_code = models.CharField(max_length=4) # 学部系統(分野)コード
     faculty_system_field_name = models.CharField(max_length=20) # 学部系統(分野)名称
+
+
+    def __str__(self):
+        return self.display_name
+
+class UniversityFacultyYearlyCode(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE)
+    year = models.CharField(max_length=4)
+    university_faculty_code = models.CharField(max_length=5)# 記入用大学コード(５桁)
 
     class Meta:
         constraints = [
@@ -49,13 +57,8 @@ class UniversityFaculty(models.Model):
         ]
 
     def __str__(self):
-        return self.display_name
+        return " ".join([self.university_faculty.display_name, self.year])
 
-class UniversityFacultyYearlyCode(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE)
-    year = models.CharField(max_length=4)
-    university_faculty_code = models.CharField(max_length=5)# 記入用大学コード(５桁)
 
 class StudentAdmissionExam(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
