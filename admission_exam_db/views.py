@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, StreamingHttpResponse, JsonResponse
 from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, UserCSVUploadForm, StudentAdmissionExamForm, StudentAdmissionExamCSVUploadForm
 
-from .models import Student, UniversityFaculty, StudentAdmissionExam
+from .models import Student, UniversityFaculty, UniversityFacultyYearlyCode, StudentAdmissionExam
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
@@ -480,13 +480,14 @@ def delete_student_admission_exam(request, student_id, student_admission_exam_id
 @login_required
 def university_faculty_autocomplete(request):
     query = request.GET.get('q', '') # クエリパラメータ 'q' を取得
+    year = request.GET.get('y', '') # クエリパラメータ 'year' を取得
     if query:
-        faculties = UniversityFaculty.objects.filter(
-            Q(display_name__startswith=query) | Q(university_faculty_code__startswith=query)
-        )[:50] # 先頭一致
+        yearlyfaculties = UniversityFacultyYearlyCode.objects.filter(year__exact=year).filter(
+                Q(university_faculty__display_name__startswith=query) | Q(university_faculty_code__startswith=query)
+            )[:100]
     else:
-        faculties = UniversityFaculty.objects.none()
-    results = [{"id": faculty.university_faculty_code, "name": faculty.display_name} for faculty in faculties]
+        yearlyfaculties = UniversityFacultyYearlyCode.objects.none()
+    results = [{"code": faculty.university_faculty_code, "name": faculty.university_faculty.display_name} for faculty in yearlyfaculties]
     return JsonResponse(results, safe=False)
 
 @login_required
