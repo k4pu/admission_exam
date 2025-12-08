@@ -34,6 +34,9 @@ class UniversityFaculty(models.Model):
     faculty_name = models.CharField(max_length=20) # 学部短縮名
     department_name = models.CharField(max_length=20) # 学科短縮名
     display_name = models.CharField(max_length=50) # 表示名
+    faculty_system_midstream_name = models.CharField(max_length=20, null=True, blank=True) # 学部系統(中系統)名称
+    faculty_system_field_code = models.CharField(max_length=4, null=True, blank=True) # 学部系統(分野)コード
+    faculty_system_field_name = models.CharField(max_length=20, null=True, blank=True) # 学部系統(分野)名称
 
     def __str__(self):
         return self.display_name
@@ -43,9 +46,6 @@ class UniversityFacultyYearlyCode(models.Model):
     university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE)
     year = models.CharField(max_length=4)
     university_faculty_code = models.CharField(max_length=5)# 記入用大学コード(５桁)
-    faculty_system_midstream_name = models.CharField(max_length=20) # 学部系統(中系統)名称
-    faculty_system_field_code = models.CharField(max_length=4) # 学部系統(分野)コード
-    faculty_system_field_name = models.CharField(max_length=20) # 学部系統(分野)名称
 
     class Meta:
         constraints = [

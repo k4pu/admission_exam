@@ -386,6 +386,7 @@ def upload_student_admission_exam(request):
                 result = row['result']
 
                 student = get_object_or_404(Student, student_id=student_id)
+                university_faculty_yearly_code = get_object_or_404(UniversityFacultyYearlyCode, university_faculty_code=university_faculty_code)
                 university_faculty = get_object_or_404(UniversityFaculty, university_faculty_code=university_faculty_code)
                 # データモデルに保存
                 if student_admission_exam_id:
