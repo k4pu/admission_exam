@@ -179,8 +179,8 @@ def download_template_csv(request, file_kind):
         writer.writerow(["username", "password", "email"])
         writer.writerow(["test", "testpass", "test@example.ed.jp"])
     elif file_kind == "student_admission_exam":
-        writer.writerow(["student_admission_exam_id", "student_id", "university_faculty_code", "year_to_take", "preference", "result"])
-        writer.writerow(["30", "1990123", "10001", "2025", "A1", "AE"])
+        writer.writerow(["student_admission_exam_id", "student_id", "university_faculty_code", "year_to_take", "preference", "result", "info"])
+        writer.writerow(["30", "1990123", "10001", "2025", "A1", "AE", "備考など"])
 
     # UTF-8-SIGにエンコード
     csv_data = output.getvalue().encode("utf-8-sig")
@@ -215,18 +215,23 @@ def download_data_csv(request, file_kind):
         data_rows = [[student.student_id, student.homeroom_class, student.attendance_number, student.gender, student.family_name, student.given_name, student.family_name_kana, student.given_name_kana, student.graduation_year] for student in student_list]
 
     elif file_kind == "university_faculty":
-        faculty_list = UniversityFaculty.objects.order_by("university_faculty_code")
+        faculty_list = UniversityFaculty.objects.order_by("id")
 
-        header_row = [["id", "year", "university_faculty_code", "university_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_code"]]
-        data_rows = [[faculty.id, faculty.year, faculty.university_faculty_code, faculty.university_name, faculty.department_name, faculty.display_name, faculty.faculty_system_midstream_name, faculty.faculty_system_midstream_name, faculty.faculty_system_field_code, faculty.faculty_system_field_code] for faculty in faculty_list]
+        header_row = [["id", "university_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_code"]]
+        data_rows = [[faculty.id, faculty.university_name, faculty.department_name, faculty.display_name, faculty.faculty_system_midstream_name, faculty.faculty_system_midstream_name, faculty.faculty_system_field_code, faculty.faculty_system_field_code] for faculty in faculty_list]
+    elif file_kind == "university_faculty_yearly_code":
+        faculty_list = UniversityFacultyYearlyCode.objects.order_by("university_faculty_code")
+
+        header_row = [["id", "year", "university_faculty_code"]]
+        data_rows = [[faculty.id, faculty.year, faculty.university_faculty_code] for faculty in faculty_list]
 
     elif file_kind == "student_admission_exam":
         admission_exam_list = StudentAdmissionExam.objects.order_by("id")# TODO これはより良いorderがありそうなので考える
-        header_row = [["student_admission_exam_id", "student_id", "university_faculty_code", "year_to_take", "preference", "result", "result_status"]]
-        data_rows = [[exam.id, exam.student.student_id, exam.university_faculty.university_faculty_code, exam.year_to_take, exam.preference, exam.result, exam.result_status] for exam in admission_exam_list]
+        header_row = [["student_admission_exam_id", "student_id", "university_faculty_code", "year_to_take", "preference", "result", "result_status", "info"]]
+        data_rows = [[exam.id, exam.student.student_id, exam.university_faculty.university_faculty_yearly_codes.get(year=exam.year_to_take).university_faculty_code, exam.year_to_take, exam.preference, exam.result, exam.result_status] for exam in admission_exam_list]
 
     elif file_kind == "student_admission_exam_display":
-        admission_exam_list = StudentAdmissionExam.objects.order_by("year_to_take", "student__homeroom_class", "student__attendance_number", "university_faculty__university_faculty_code")# TODO これはより良いorderがありそうなので考える
+        admission_exam_list = StudentAdmissionExam.objects.order_by("year_to_take", "student__homeroom_class", "student__attendance_number", "university_faculty__university_faculty_yearly_codes__university_faculty_code")# TODO これはより良いorderがありそうなので考える
         header_row = [["受験年", "卒業年", "組", "番", "氏名", "大学_学部", "結果詳細", "結果", "備考"]]
         data_rows = [[exam.year_to_take, exam.student.graduation_year, exam.student.homeroom_class, exam.student.attendance_number, exam.student.family_name + " " + exam.student.given_name, exam.university_faculty.display_name, exam.get_result_display(), exam.get_result_status_display(), exam.info] for exam in admission_exam_list]
 
@@ -384,6 +389,7 @@ def upload_student_admission_exam(request):
                 year_to_take = row['year_to_take']
                 preference = row['preference']
                 result = row['result']
+                info = row['info']
 
                 student = get_object_or_404(Student, student_id=student_id)
                 university_faculty_yearly_code = get_object_or_404(UniversityFacultyYearlyCode, university_faculty_code=university_faculty_code)
@@ -398,6 +404,7 @@ def upload_student_admission_exam(request):
                         'year_to_take': year_to_take,
                         'preference': preference,
                         'result': result,
+                        'info': info,
                         }
                     )
                 else:
@@ -407,6 +414,7 @@ def upload_student_admission_exam(request):
                         year_to_take=year_to_take,
                         preference=preference,
                         result=result,
+                        info=info,
                     )
 
             return redirect('admission_exam_db:upload_success') # アップロード成功画面にリダイレクト

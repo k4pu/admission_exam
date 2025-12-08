@@ -43,7 +43,7 @@ class UniversityFaculty(models.Model):
 
 class UniversityFacultyYearlyCode(models.Model):
     id = models.BigAutoField(primary_key=True)
-    university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE)
+    university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE, related_name="university_faculty_yearly_codes")
     year = models.CharField(max_length=4)
     university_faculty_code = models.CharField(max_length=5)# 記入用大学コード(５桁)
 
