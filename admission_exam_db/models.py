@@ -38,6 +38,14 @@ class UniversityFaculty(models.Model):
     faculty_system_field_code = models.CharField(max_length=4, null=True, blank=True) # 学部系統(分野)コード
     faculty_system_field_name = models.CharField(max_length=20, null=True, blank=True) # 学部系統(分野)名称
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['university_name', 'faculty_name', 'department_name'],
+                name='uniq_university_faculty_department_name',
+            ),
+        ]
+
     def __str__(self):
         return self.display_name
 
@@ -49,6 +57,10 @@ class UniversityFacultyYearlyCode(models.Model):
 
     class Meta:
         constraints = [
+            models.UniqueConstraint(
+                fields=['year', 'university_faculty'],
+                name='uniq_year_faculty',
+            ),
             models.UniqueConstraint(
                 fields=['year', 'university_faculty_code'],
                 name='uniq_year_faculty_code',
