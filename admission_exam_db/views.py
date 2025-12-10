@@ -68,7 +68,7 @@ def passed_exam_count(request):
 
     for year in years:
         university_faculty_list = UniversityFaculty.objects.filter(studentadmissionexam__year_to_take=year, studentadmissionexam__result_status="P").values("studentadmissionexam__year_to_take", "university_name", "faculty_name").annotate(passed_exam_count=Count("studentadmissionexam", distinct=True), passed_exam_count_by_graduates=Count("studentadmissionexam", filter=Q(studentadmissionexam__student__graduation_year__lt=F("studentadmissionexam__year_to_take")), distinct=True)).filter(passed_exam_count__gt=0)# １対多の多側は小文字らしい.
-        university_name_list = university_faculty_list.values("university_name").order_by("university_faculty_code")
+        university_name_list = university_faculty_list.values("university_name").order_by("university_faculty_yearly_codes__university_faculty_code")
         passed_exam_count_table[year] = {
             university_name['university_name']: {}
             for university_name in university_name_list
@@ -84,7 +84,7 @@ def passed_exam_count(request):
 
 @login_required
 def passed_exam_by_university(request, exam_year, university):
-    admission_exam_list = StudentAdmissionExam.objects.filter(university_faculty__university_name=university, year_to_take=exam_year, result_status="P").order_by("university_faculty__university_faculty_code", "-student__graduation_year")
+    admission_exam_list = StudentAdmissionExam.objects.filter(university_faculty__university_name=university, year_to_take=exam_year, result_status="P").order_by("university_faculty__university_faculty_yearly_codes__university_faculty_code", "-student__graduation_year")
     context ={
         'nbar': 'passed_exam_count',
         'exam_year': exam_year,
@@ -179,8 +179,8 @@ def download_template_csv(request, file_kind):
     writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
 
     if file_kind == "university_faculty":
-        writer.writerow(["year", "university_faculty_code", "university_name", "faculty_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"])
-        writer.writerow(["2025", "10001", "旭川医科" ,"医" ,"医－前" ,"旭川医科_医_医－前" ,"医・歯・薬・保健" ,"5101" ,"医"])
+        writer.writerow(["year", "university_faculty_code", "university_name", "faculty_name", "department_name", "display_name", "faculty_system_midstream_code", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"])
+        writer.writerow(["2025", "10001", "旭川医科" ,"医" ,"医－前" ,"旭川医科_医_医－前" , "51", "医・歯・薬・保健" ,"5101" ,"医"])
     elif file_kind == "student":
         writer.writerow(["student_id", "homeroom_class", "attendance_number", "gender", "family_name", "given_name", "family_name_kana", "given_name_kana", "graduation_year"])
         writer.writerow(["1900123", "A", "01", "M", "佐藤", "花子", "さとう", "はなこ", "2025"])

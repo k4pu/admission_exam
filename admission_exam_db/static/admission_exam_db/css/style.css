@@ -90,6 +90,7 @@ th {
 table {
     margin: 30px auto;
     border-collapse: collapse;
+    border: solid 1px #777;
 }
 
 .table-striped tr:nth-child(even) {
