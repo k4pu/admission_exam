@@ -134,7 +134,7 @@ def upload_university_faculty(request):
                 university_name = row['university_name']
                 faculty_name = row['faculty_name']
                 department_name = row['department_name']
-                display_name = row['display_name']
+                faculty_system_midstream_code = row['faculty_system_midstream_code']
                 faculty_system_midstream_name = row['faculty_system_midstream_name']
                 faculty_system_field_code = row['faculty_system_field_code']
                 faculty_system_field_name = row['faculty_system_field_name']
@@ -147,7 +147,7 @@ def upload_university_faculty(request):
                     faculty_name=faculty_name,
                     department_name=department_name,
                     defaults = {
-                        'display_name': display_name,
+                        'faculty_system_midstream_code': faculty_system_midstream_code,
                         'faculty_system_midstream_name': faculty_system_midstream_name,
                         'faculty_system_field_code': faculty_system_field_code,
                         'faculty_system_field_name': faculty_system_field_name,
@@ -179,8 +179,8 @@ def download_template_csv(request, file_kind):
     writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
 
     if file_kind == "university_faculty":
-        writer.writerow(["year", "university_faculty_code", "university_name", "faculty_name", "department_name", "display_name", "faculty_system_midstream_code", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"])
-        writer.writerow(["2025", "10001", "旭川医科" ,"医" ,"医－前" ,"旭川医科_医_医－前" , "51", "医・歯・薬・保健" ,"5101" ,"医"])
+        writer.writerow(["year", "university_faculty_code", "university_name", "faculty_name", "department_name", "faculty_system_midstream_code", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"])
+        writer.writerow(["2025", "10001", "旭川医科" ,"医" ,"医－前", "51", "医・歯・薬・保健" ,"5101" ,"医"])
     elif file_kind == "student":
         writer.writerow(["student_id", "homeroom_class", "attendance_number", "gender", "family_name", "given_name", "family_name_kana", "given_name_kana", "graduation_year"])
         writer.writerow(["1900123", "A", "01", "M", "佐藤", "花子", "さとう", "はなこ", "2025"])
@@ -226,8 +226,8 @@ def download_data_csv(request, file_kind):
     elif file_kind == "university_faculty":
         faculty_list = UniversityFaculty.objects.order_by("id")
 
-        header_row = [["id", "university_name", "faculty_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"]]
-        data_rows = [[faculty.id, faculty.university_name, faculty.faculty_name, faculty.department_name, faculty.display_name, faculty.faculty_system_midstream_name, faculty.faculty_system_field_code, faculty.faculty_system_field_name] for faculty in faculty_list]
+        header_row = [["id", "university_name", "faculty_name", "department_name", "faculty_system_midstream_code", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"]]
+        data_rows = [[faculty.id, faculty.university_name, faculty.faculty_name, faculty.department_name, faculty.faculty_system_midstream_code, faculty.faculty_system_midstream_name, faculty.faculty_system_field_code, faculty.faculty_system_field_name] for faculty in faculty_list]
 
     elif file_kind == "university_faculty_yearly_code":
         faculty_list = UniversityFacultyYearlyCode.objects.order_by("university_faculty_code")
@@ -238,8 +238,8 @@ def download_data_csv(request, file_kind):
     elif file_kind == "joined_university_faculty":
         faculty_list = UniversityFacultyYearlyCode.objects.order_by("university_faculty_code")
 
-        header_row = [["year", "university_faculty_code", "university_name", "faculty_name", "department_name", "display_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"]]
-        data_rows = [[faculty.year, faculty.university_faculty_code, faculty.university_faculty.university_name, faculty.university_faculty.faculty_name, faculty.university_faculty.department_name, faculty.university_faculty.display_name, faculty.university_faculty.faculty_system_midstream_name, faculty.university_faculty.faculty_system_field_code, faculty.university_faculty.faculty_system_field_name] for faculty in faculty_list]
+        header_row = [["year", "university_faculty_code", "university_name", "faculty_name", "department_name", "faculty_system_midstream_name", "faculty_system_field_code", "faculty_system_field_name"]]
+        data_rows = [[faculty.year, faculty.university_faculty_code, faculty.university_faculty.university_name, faculty.university_faculty.faculty_name, faculty.university_faculty.department_name, faculty.university_faculty.faculty_system_midstream_name, faculty.university_faculty.faculty_system_field_code, faculty.university_faculty.faculty_system_field_name] for faculty in faculty_list]
 
     elif file_kind == "student_admission_exam":
         admission_exam_list = StudentAdmissionExam.objects.order_by("id")# TODO これはより良いorderがありそうなので考える
