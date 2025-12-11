@@ -13,18 +13,37 @@
 <form method="post">
 {% csrf_token %}
 <div class="Form">
-    {% for field in form %}
+    <!-- 使いやすさのためにyear_to_take選択だけははじめに -->
+    {% with field=form.year_to_take %}
         <div class="Form-Item">
             {% if field.field.required %}
                 <span class="Form-Item-Label-Required">必須</span>
             {% endif %}
-            <label class="From-Item-Lable" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            <label class="Form-Item-Label" for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
         </div>
-        {% if field.name == 'university_faculty' %}
-            <div id="autocomplete-results"></div><!-- オートコンプリート候補表示用 -->
-            <input type="hidden" id="selected-university-hidden" name="university_faculty_id">
-            <p>選択中: <span id="selected-university"></span></p>
+    {% endwith %}
+</div>
+<div class="Form">
+    <div class="Form-Item">
+        <span class="Form-Item-Label-Required">必須</span>
+        <label class="Form-Item-Label" for="university-faculty-autocomplete">大学・学部コード</label>
+        <input type="text" id="university-faculty-autocomplete" class="Form-Item-Input" autocomplete="off" placeholder="大学_学部名または大学・学部コードを入力">
+    </div>
+    <div id="autocomplete-results"></div><!-- オートコンプリート候補表示用 -->
+    <input type="hidden" id="selected-university-hidden" name="university_faculty_code">
+    <p>選択中: <span id="selected-university"></span></p>
+</div>
+<div class="Form">
+    {% for field in form %}
+        {% if field.name != 'year_to_take' %} <!-- はじめにyear_to_takeだけは表示済 -->
+        <div class="Form-Item">
+            {% if field.field.required %}
+                <span class="Form-Item-Label-Required">必須</span>
+            {% endif %}
+            <label class="Form-Item-Label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+        </div>
         {% endif %}
     {% endfor %}
 </div>

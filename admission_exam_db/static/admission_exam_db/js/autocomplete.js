@@ -1,14 +1,16 @@
 // autocomplete.js
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('university-faculty-autocomplete');
+    const yearToTake = document.getElementById('year-to-take');
     const resultsDiv = document.getElementById('autocomplete-results');
     const hiddenInput = document.getElementById('selected-university-hidden');
     const selectedUniversity = document.getElementById('selected-university'); // 選択中の大学を表示
 
     input.addEventListener('input', async () => {
         const query = input.value;
+        const year = yearToTake.value;
         if (query.length > 1) {
-            const response = await fetch(`/admission_exam_db/api/university_faculty?q=${encodeURIComponent(query)}`);
+            const response = await fetch(`/admission_exam_db/api/university_faculty?q=${encodeURIComponent(query)}&y=${encodeURIComponent(year)}`);
             const results = await response.json();
 
             resultsDiv.innerHTML = ''; // 結果をクリア
@@ -17,8 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 div.textContent = item.name;
                 div.classList.add('autocomplete-item');
                 div.addEventListener('click', () => {
-                    input.value = item.id; // 選択した候補をフィールドに設定
-                    hiddenInput.value = item.id;
+                    input.value = item.code; // 選択した候補をフィールドに設定
+                    hiddenInput.value = item.code;
                     selectedUniversity.textContent = item.name;
                     resultsDiv.innerHTML = ''; // 候補をクリア
                 });

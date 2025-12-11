@@ -1,5 +1,5 @@
 from django import forms
-from .models import UniversityFaculty, StudentAdmissionExam
+from .models import UniversityFaculty, UniversityFacultyYearlyCode, StudentAdmissionExam
 import datetime
 
 
@@ -18,23 +18,18 @@ class UserCSVUploadForm(forms.Form):
 class StudentAdmissionExamForm(forms.ModelForm):
     class Meta:
         model = StudentAdmissionExam
-        fields = ['year_to_take', 'university_faculty', 'preference', 'result', 'info']
+        fields = ['year_to_take', 'preference', 'result', 'info']# yearly_university_facultyを採用してからここにuniversity_facultyを入れてしまうと不都合があることがわかった
         labels = {
             'year_to_take': '入試年度',
-            'university_faculty': '大学・学部コード',
             'preference': '志望',
             'result': '結果',
             'info': '備考',
         }
         widgets = {
             'year_to_take': forms.NumberInput(attrs={
+                'id': 'year-to-take',
+                'name': 'year_to_take',
                 'class': 'Form-Item-Choice',
-            }),
-            'university_faculty': forms.TextInput(attrs={
-                'id': 'university-faculty-autocomplete',
-                'class': 'Form-Item-Input',
-                'autocomplete': 'off',
-                'placeholder': '大学・学部名またはコードを入力',
             }),
             'preference': forms.Select(attrs={
                 'class': 'Form-Item-Choice',
@@ -57,13 +52,18 @@ class StudentAdmissionExamForm(forms.ModelForm):
         self.fields['year_to_take'].initial = default_exam_year
 
     def save(self, commit=True, user=None):
-        instance = super().save(commit=False)# 一旦親クラスのsaveメソッドでStudentAdmissionModelインスタンスを作成する. この時点でデータベースに反映はされない
+        instance = super().save(commit=False)# 一旦親クラスのsaveメソッドでStudentAdmissionExamインスタンスを作成する. この時点でデータベースに反映はされない
+        year_to_take = self.cleaned_data.get('year_to_take')
         if self.student:
             instance.student = self.student # Noneの場合もあるが、そうでなければinstanceにstudentを代入する
-        university_faculty_id = self.data.get('university_faculty_id')
-        if university_faculty_id:
-            instance.university_faculty_id = university_faculty_id
+        university_faculty_code = self.data.get('university_faculty_code')# ブラウザのinputの情報を取得
+        if university_faculty_code:
+            yearly_university_faculty = UniversityFacultyYearlyCode.objects.get(
+                year=year_to_take,
+                university_faculty_code=university_faculty_code
+            )
+            instance.university_faculty = yearly_university_faculty.university_faculty
 
         if commit:
             instance.save(user=user)# save()はdefaultでcommit=Trueなのでここでデータベースに保存される
-        return instance# 親クラスもinstanceを返すし, この方が良さそうではあるが使い道はまだわからない
+        return instance# 親クラスもinstanceを返すし, この方が良さそうではあるが使い道はまだわからない -> views.py のcreate_student_admission_examのform = StudentAdmissionExamForm()で受け取るのか

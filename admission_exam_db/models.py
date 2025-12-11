@@ -7,7 +7,7 @@ logger = logging.getLogger('django')
 
 
 class Student(models.Model):
-    student_id = models.CharField(max_length=7, primary_key=True)
+    student_id = models.CharField(max_length=7, primary_key=True)# TODO student_idよりidのほうが良かったなあ
     homeroom_class = models.CharField(max_length=1)
     attendance_number = models.CharField(max_length=2)
     family_name = models.CharField(max_length=30)
@@ -29,21 +29,62 @@ class Student(models.Model):
         return " ".join([self.family_name, self.given_name])
 
 class UniversityFaculty(models.Model):
-    university_faculty_code = models.CharField(max_length=5, primary_key=True)# 記入用大学コード(５桁)
+    id = models.BigAutoField(primary_key=True)
     university_name = models.CharField(max_length=20)  # 大学短縮名
     faculty_name = models.CharField(max_length=20) # 学部短縮名
     department_name = models.CharField(max_length=20) # 学科短縮名
-    display_name = models.CharField(max_length=50) # 表示名
+    # display_name = models.CharField(max_length=50) # 表示名 これはpropertyに変更
+    faculty_system_midstream_code = models.CharField(max_length=2) # 学部系統(中系統)コード
     faculty_system_midstream_name = models.CharField(max_length=20) # 学部系統(中系統)名称
     faculty_system_field_code = models.CharField(max_length=4) # 学部系統(分野)コード
     faculty_system_field_name = models.CharField(max_length=20) # 学部系統(分野)名称
 
+    @property
+    def display_name(self):
+        univ_name = self.university_name
+        fac_name = '' if self.faculty_name == '' else '_' + self.faculty_name
+        dep_name = '' if self.department_name == '' else '_' + self.department_name
+        return f"{univ_name}{fac_name}{dep_name}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['university_name', 'faculty_name', 'department_name'],
+                name='uniq_university_faculty_department_name',
+            ),
+        ]
+
     def __str__(self):
         return self.display_name
 
+class UniversityFacultyYearlyCode(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE, related_name="university_faculty_yearly_codes")
+    year = models.CharField(max_length=4)
+    university_faculty_code = models.CharField(max_length=5)# 記入用大学コード(５桁)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['year', 'university_faculty'],
+                name='uniq_year_faculty',
+            ),
+            models.UniqueConstraint(
+                fields=['year', 'university_faculty_code'],
+                name='uniq_year_faculty_code',
+            ),
+        ]
+
+    def __str__(self):
+        return " ".join([self.university_faculty.display_name, self.year])
+
+
 class StudentAdmissionExam(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    university_faculty = models.ForeignKey(UniversityFaculty, on_delete=models.CASCADE)
+    university_faculty = models.ForeignKey(
+        UniversityFaculty,
+        on_delete=models.CASCADE,
+    )
     year_to_take = models.CharField(max_length=4)
     PREFERENCE_CHOICES = [
         ('A1','受かったら必ず入学する第1志望'),
@@ -114,6 +155,15 @@ class StudentAdmissionExam(models.Model):
         null=True,
         blank=True
     )
+
+    class Meta:
+        # ここは運用上外したほうが良い場合がある可能性
+        constraints = [
+            models.UniqueConstraint(
+                fields=['student', 'year_to_take', 'university_faculty'],
+                name='uniq_student_year_exam',
+            ),
+        ]
 
     def __str__(self):
         return " ".join([self.student.family_name, self.student.given_name]) + ": " + self.university_faculty.display_name

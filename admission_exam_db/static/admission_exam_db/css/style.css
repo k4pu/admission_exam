@@ -90,6 +90,7 @@ th {
 table {
     margin: 30px auto;
     border-collapse: collapse;
+    border: solid 1px #777;
 }
 
 .table-striped tr:nth-child(even) {
@@ -153,7 +154,7 @@ input[type="text"] {
   width: 100%;
   max-width: 248px;
   letter-spacing: 0.05em;
-  font-weight: bold;
+  /* font-weight: bold; */
   font-size: 18px;
 }
 @media screen and (max-width: 480px) {
