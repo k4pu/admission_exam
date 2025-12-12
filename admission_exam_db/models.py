@@ -33,18 +33,18 @@ class UniversityFaculty(models.Model):
     university_name = models.CharField(max_length=20)  # 大学短縮名
     faculty_name = models.CharField(max_length=20) # 学部短縮名
     department_name = models.CharField(max_length=20) # 学科短縮名
-    # display_name = models.CharField(max_length=50) # 表示名 これはpropertyに変更
+    display_name = models.CharField(max_length=50, null=True, blank=True) # 表示名 これはpropertyに変更
     faculty_system_midstream_code = models.CharField(max_length=2) # 学部系統(中系統)コード
     faculty_system_midstream_name = models.CharField(max_length=20) # 学部系統(中系統)名称
     faculty_system_field_code = models.CharField(max_length=4) # 学部系統(分野)コード
     faculty_system_field_name = models.CharField(max_length=20) # 学部系統(分野)名称
 
-    @property
-    def display_name(self):
-        univ_name = self.university_name
-        fac_name = '' if self.faculty_name == '' else '_' + self.faculty_name
-        dep_name = '' if self.department_name == '' else '_' + self.department_name
-        return f"{univ_name}{fac_name}{dep_name}"
+    # @property
+    # def display_name(self):
+    #     univ_name = self.university_name
+    #     fac_name = '' if self.faculty_name == '' else '_' + self.faculty_name
+    #     dep_name = '' if self.department_name == '' else '_' + self.department_name
+    #     return f"{univ_name}{fac_name}{dep_name}"
 
     class Meta:
         constraints = [
@@ -53,6 +53,13 @@ class UniversityFaculty(models.Model):
                 name='uniq_university_faculty_department_name',
             ),
         ]
+
+    def save(self, *args, **kwargs):
+        univ_name = self.university_name
+        fac_name = '' if self.faculty_name == '' else '_' + self.faculty_name
+        dep_name = '' if self.department_name == '' else '_' + self.department_name
+        self.display_name = f"{univ_name}{fac_name}{dep_name}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.display_name
