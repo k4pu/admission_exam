@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 
-from django.db.models import Q, F, Count
+from django.db.models import Q, F, Count, Min
 
 import csv
 import io
@@ -67,8 +67,25 @@ def passed_exam_count(request):
     }
 
     for year in years:
-        university_faculty_list = UniversityFaculty.objects.filter(studentadmissionexam__year_to_take=year, studentadmissionexam__result_status="P").values("studentadmissionexam__year_to_take", "university_name", "faculty_name").annotate(passed_exam_count=Count("studentadmissionexam", distinct=True), passed_exam_count_by_graduates=Count("studentadmissionexam", filter=Q(studentadmissionexam__student__graduation_year__lt=F("studentadmissionexam__year_to_take")), distinct=True)).filter(passed_exam_count__gt=0)# １対多の多側は小文字らしい.
+        university_faculty_list = UniversityFaculty.objects.filter(
+            studentadmissionexam__year_to_take=year,
+            studentadmissionexam__result_status="P"
+        ).values(
+            "studentadmissionexam__year_to_take",
+            "university_name",
+            "faculty_name"
+        ).annotate(
+            passed_exam_count=Count("studentadmissionexam", distinct=True),
+            passed_exam_count_by_graduates=Count(
+                "studentadmissionexam",
+                filter=Q(studentadmissionexam__student__graduation_year__lt=F("studentadmissionexam__year_to_take")),
+                distinct=True
+            ),
+            order_code=Min("university_faculty_yearly_codes__university_faculty_code"),
+        ).filter(passed_exam_count__gt=0).order_by("order_code")
+
         university_name_list = university_faculty_list.values("university_name").order_by("university_faculty_yearly_codes__university_faculty_code")
+
         passed_exam_count_table[year] = {
             university_name['university_name']: {}
             for university_name in university_name_list
@@ -84,7 +101,7 @@ def passed_exam_count(request):
 
 @login_required
 def passed_exam_by_university(request, exam_year, university):
-    admission_exam_list = StudentAdmissionExam.objects.filter(university_faculty__university_name=university, year_to_take=exam_year, result_status="P").order_by("university_faculty__university_faculty_yearly_codes__university_faculty_code", "-student__graduation_year")
+    admission_exam_list = StudentAdmissionExam.objects.filter(university_faculty__university_name=university, year_to_take=exam_year, result_status="P", university_faculty__university_faculty_yearly_codes__year=exam_year).order_by("university_faculty__university_faculty_yearly_codes__university_faculty_code", "-student__graduation_year")
     context ={
         'nbar': 'passed_exam_count',
         'exam_year': exam_year,
@@ -107,7 +124,11 @@ def student_detail(request, student_id):
         Q(homeroom_class=student.homeroom_class, attendance_number__gt=student.attendance_number)
     ).order_by('homeroom_class', 'attendance_number').first()
 
-    student_admission_exam_list = StudentAdmissionExam.objects.filter(student=student).order_by("-year_to_take", "university_faculty_id")
+    student_admission_exam_list = StudentAdmissionExam.objects.filter(
+        student=student,
+    ).annotate(
+        order_code=Min("university_faculty__university_faculty_yearly_codes__university_faculty_code"),
+    ).order_by("-year_to_take", "order_code")
 
     context ={
         'nbar': 'student_detail',
