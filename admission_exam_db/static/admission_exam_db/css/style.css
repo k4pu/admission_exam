@@ -48,6 +48,38 @@ a:hover {
     cursor: pointer;
 }
 
+div.link-wrapper {
+    text-align: center;
+    margin: 50px 0px;
+}
+
+a.link-button {
+  font-weight: bold;
+  text-decoration: none;/*下線消す*/
+  color:white;
+}
+
+a.link-center-button {
+  background: #00ACD6;
+  color:white;
+  padding:30px 60px;
+  border-radius: 120px;
+}
+
+a.link-left-button {
+  background: skyblue;
+  margin-right: 250px;
+  padding:10px 20px;
+  border-radius: 40px;
+}
+
+a.link-right-button {
+  background: skyblue;
+  margin-left: 250px;
+  padding:10px 20px;
+  border-radius: 40px;
+}
+
 ul {
     list-style-type: square;
 }
@@ -63,8 +95,12 @@ h2 {
   margin-top: 20px;
   margin-left: auto;
   margin-right: auto;
+  padding: auto;
   max-width: 720px;
+  font-size: 35px;
+  text-align: center;
 }
+
 @media screen and (max-width: 480px) {
   h2 {
     margin-top: 60px;

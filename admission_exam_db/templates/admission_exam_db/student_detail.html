@@ -1,13 +1,16 @@
 {% extends 'admission_exam_db/base.html' %}
 {% block title %}{{ student_name }} 受験詳細{% endblock %}
 {% block content %}
-<h2>{{ student_name }} 受験詳細</h2>
-{% if prev_student %}
-    <a  href="{% url 'admission_exam_db:student_detail' student_id=prev_student.student_id %}">前の生徒</a>
-{% endif %}
-{% if next_student %}
-    <a  href="{% url 'admission_exam_db:student_detail' student_id=next_student.student_id %}">次の生徒</a>
-{% endif %}
+<h2>{{ homeroom_class }} 組 {{ attendance_number }} 番 {{ student_name }} 受験詳細</h2>
+<div class="link-wrapper">
+    {% if prev_student %}
+        <a class="link-button link-left-button" href="{% url 'admission_exam_db:student_detail' student_id=prev_student.student_id %}">前の生徒</a>
+    {% endif %}
+        <a class="link-button link-center-button" href="{% url 'admission_exam_db:create_student_admission_exam' student_id=student_id %}">受験記録登録</a>
+    {% if next_student %}
+        <a class="link-button link-right-button" href="{% url 'admission_exam_db:student_detail' student_id=next_student.student_id %}">次の生徒</a>
+    {% endif %}
+</div>
 {% if student_admission_exam_list %}
     <table class="student-admission-exam-table table table-striped table-bordered table-hover">
         <thead>
@@ -28,6 +31,5 @@
 {% else %}
     <p>No admission exam data are available.</p>
 {% endif %}
-    <a href="{% url 'admission_exam_db:create_student_admission_exam' student_id=student_id %}">受験記録登録</a>
 {% endblock %}
 

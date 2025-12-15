@@ -154,6 +154,8 @@ def student_detail(request, student_id):
     context ={
         'nbar': 'student_detail',
         'student_id': student_id,
+        'homeroom_class': student.homeroom_class,
+        'attendance_number': student.attendance_number,
         'student_name': ' '.join([student.family_name, student.given_name]),
         'prev_student': prev_student,
         'next_student': next_student,
