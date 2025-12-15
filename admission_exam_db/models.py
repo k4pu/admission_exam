@@ -9,7 +9,7 @@ logger = logging.getLogger('django')
 class Student(models.Model):
     student_id = models.CharField(max_length=7, primary_key=True)# TODO student_idよりidのほうが良かったなあ
     homeroom_class = models.CharField(max_length=1)
-    attendance_number = models.CharField(max_length=2)
+    attendance_number = models.CharField(max_length=2)# ここを数値（PositiveSmallIntegerなど）扱いにしたいが、運用が始まったのでおいておく
     family_name = models.CharField(max_length=30)
     given_name = models.CharField(max_length=30)
     family_name_kana = models.CharField(max_length=30)

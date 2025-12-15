@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, StreamingHttpResponse, JsonResponse
+from django.db.models import IntegerField
+from django.db.models.functions import Cast
 from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, UserCSVUploadForm, StudentAdmissionExamForm, StudentAdmissionExamCSVUploadForm
 
 from .models import Student, UniversityFaculty, UniversityFacultyYearlyCode, StudentAdmissionExam
@@ -35,7 +37,12 @@ def index(request):
 
 @login_required
 def student(request):
-    student_list = Student.objects.order_by("-graduation_year", "homeroom_class", "attendance_number")
+    student_list = Student.objects.annotate(
+            order_attendance_number=Cast(
+                "attendance_number",
+                IntegerField()
+            )
+        ).order_by("-graduation_year", "homeroom_class", "order_attendance_number")
     context ={
         'nbar': 'student',
         'student_list': student_list,
@@ -114,15 +121,29 @@ def passed_exam_by_university(request, exam_year, university):
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
 
-    prev_student = Student.objects.filter(
+    prev_student = Student.objects.annotate(
+        order_attendance_number=Cast(
+            "attendance_number",
+            IntegerField()
+        )
+    ).filter(
+        graduation_year=student.graduation_year
+    ).filter(
         Q(homeroom_class__lt=student.homeroom_class) |
         Q(homeroom_class=student.homeroom_class, attendance_number__lt=student.attendance_number)
-    ).order_by('-homeroom_class', '-attendance_number').first()
+    ).order_by('-homeroom_class', '-order_attendance_number').first()
 
-    next_student = Student.objects.filter(
+    next_student = Student.objects.annotate(
+        order_attendance_number=Cast(
+            "attendance_number",
+            IntegerField()
+        )
+    ).filter(
+        graduation_year=student.graduation_year
+    ).filter(
         Q(homeroom_class__gt=student.homeroom_class) |
         Q(homeroom_class=student.homeroom_class, attendance_number__gt=student.attendance_number)
-    ).order_by('homeroom_class', 'attendance_number').first()
+    ).order_by('homeroom_class', 'attendance_number', 'order_attendance_number').first()
 
     student_admission_exam_list = StudentAdmissionExam.objects.filter(
         student=student,
