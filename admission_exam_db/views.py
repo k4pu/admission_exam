@@ -121,29 +121,23 @@ def passed_exam_by_university(request, exam_year, university):
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
 
-    prev_student = Student.objects.annotate(
-        order_attendance_number=Cast(
-            "attendance_number",
-            IntegerField()
-        )
+    current_num = int(student.attendance_number) # 一時的に数値化
+
+    base = Student.objects.annotate(
+        order_attendance_number=Cast("attendance_number", IntegerField())
     ).filter(
         graduation_year=student.graduation_year
-    ).filter(
+    )
+
+    prev_student = base.filter(
         Q(homeroom_class__lt=student.homeroom_class) |
-        Q(homeroom_class=student.homeroom_class, attendance_number__lt=student.attendance_number)
+        Q(homeroom_class=student.homeroom_class, order_attendance_number__lt=current_num)
     ).order_by('-homeroom_class', '-order_attendance_number').first()
 
-    next_student = Student.objects.annotate(
-        order_attendance_number=Cast(
-            "attendance_number",
-            IntegerField()
-        )
-    ).filter(
-        graduation_year=student.graduation_year
-    ).filter(
+    next_student = base.filter(
         Q(homeroom_class__gt=student.homeroom_class) |
-        Q(homeroom_class=student.homeroom_class, attendance_number__gt=student.attendance_number)
-    ).order_by('homeroom_class', 'attendance_number', 'order_attendance_number').first()
+        Q(homeroom_class=student.homeroom_class, order_attendance_number__gt=current_num)
+    ).order_by('homeroom_class', 'order_attendance_number').first()
 
     student_admission_exam_list = StudentAdmissionExam.objects.filter(
         student=student,
