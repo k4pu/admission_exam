@@ -121,10 +121,10 @@ def passed_exam_by_university(request, exam_year, university):
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
 
-    current_num = int(student.attendance_number) # 一時的に数値化
+    current_num = int(student.attendance_number) # 現在の生徒の出席番号を一時的に数値化
 
     base = Student.objects.annotate(
-        order_attendance_number=Cast("attendance_number", IntegerField())
+        order_attendance_number=Cast("attendance_number", IntegerField()) # 文字列だが一時的に数値として扱う仮想カラムを追加
     ).filter(
         graduation_year=student.graduation_year
     )
