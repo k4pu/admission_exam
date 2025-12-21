@@ -23,7 +23,7 @@
                                     <td>{{ faculty }}</td>
                                     {% with count_list=university_data|get_value:faculty %}
                                     {% if count_list|get_value:'graduates' > 0 %}
-                                    <td>{{ count_list|get_value:'total' }}名（内浪人生 {{ count_list|get_value:'graduates' }}名）</td>
+                                    <td>{{ count_list|get_value:'total' }}名（内既卒生 {{ count_list|get_value:'graduates' }}名）</td>
                                     {% else %}
                                     <td>{{ count_list|get_value:'total' }}名</td>
                                     {% endif %}
