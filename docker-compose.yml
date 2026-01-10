@@ -14,13 +14,19 @@ services:
     build: .
     env_file:
       - .env
-    # command: ["gunicorn", "schoolapps.wsgi:application", "--bind", "0.0.0.0:8000", "-c", "gunicorn.conf.py"]
-    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"] # debug用
+    ############# 本番用 #############
+    command: ["gunicorn", "schoolapps.wsgi:application", "--bind", "0.0.0.0:8000", "-c", "gunicorn.conf.py"]
+    ######### 本番用ここまで #########
+
+    ############ debug用 ############
+    # command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    # ports:
+    #   - "8000:8000"
+    ######## debug用ここまで ########
+
     volumes:
       - .:/app
       - static_data:/app/staticfiles
-    ports: # debug用
-      - "8000:8000" # debug用
     depends_on:
       - db
     networks:

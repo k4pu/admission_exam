@@ -285,7 +285,12 @@ def download_data_csv(request, file_kind):
         data_rows = [[exam.id, exam.student.student_id, exam.university_faculty.university_faculty_yearly_codes.get(year=exam.year_to_take).university_faculty_code, exam.year_to_take, exam.preference, exam.result, exam.result_status, exam.info] for exam in admission_exam_list]
 
     elif file_kind == "student_admission_exam_display":
-        admission_exam_list = StudentAdmissionExam.objects.order_by("year_to_take", "student__homeroom_class", "student__attendance_number", "university_faculty__university_faculty_yearly_codes__university_faculty_code")# TODO これはより良いorderがありそうなので考える
+        admission_exam_list = StudentAdmissionExam.objects.order_by(
+            "year_to_take",
+            "student__homeroom_class",
+            "student__attendance_number",
+            "university_faculty__pk"
+        )# TODO これはより良いorderがありそうなので考える
         header_row = [["受験年", "卒業年", "組", "番", "氏名", "大学_学部", "結果詳細", "結果", "備考"]]
         data_rows = [[exam.year_to_take, exam.student.graduation_year, exam.student.homeroom_class, exam.student.attendance_number, exam.student.family_name + " " + exam.student.given_name, exam.university_faculty.display_name, exam.get_result_display(), exam.get_result_status_display(), exam.info] for exam in admission_exam_list]
 

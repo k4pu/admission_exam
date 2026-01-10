@@ -91,7 +91,7 @@ class StudentAdmissionExam(models.Model):
     university_faculty = models.ForeignKey(
         UniversityFaculty,
         on_delete=models.CASCADE,
-    )
+    )# university_faculty_yearly_codesにつなげるべき？集計時にfilterかけるときに二度手間感
     year_to_take = models.CharField(max_length=4)
     PREFERENCE_CHOICES = [
         ('A1','受かったら必ず入学する第1志望'),
