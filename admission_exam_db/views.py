@@ -5,7 +5,7 @@ from django.db.models.functions import Cast
 from .forms import UniversityFacultyCSVUploadForm, StudentCSVUploadForm, UserCSVUploadForm, StudentAdmissionExamForm, StudentAdmissionExamCSVUploadForm
 
 from .models import Student, UniversityFaculty, UniversityFacultyYearlyCode, StudentAdmissionExam
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 
@@ -223,8 +223,8 @@ def download_template_csv(request, file_kind):
         writer.writerow(["student_id", "homeroom_class", "attendance_number", "gender", "family_name", "given_name", "family_name_kana", "given_name_kana", "graduation_year"])
         writer.writerow(["1900123", "A", "01", "M", "佐藤", "花子", "さとう", "はなこ", "2025"])
     elif file_kind == "user":
-        writer.writerow(["username", "password", "email"])
-        writer.writerow(["test", "testpass", "test@example.ed.jp"])
+        writer.writerow(["username", "password", "email", "is_editor"])
+        writer.writerow(["test", "testpass", "test@example.ed.jp", "True"])
     elif file_kind == "student_admission_exam":
         writer.writerow(["student_admission_exam_id", "student_id", "university_faculty_code", "year_to_take", "preference", "result", "info"])
         writer.writerow(["30", "1990123", "10001", "2025", "A1", "AE", "備考など"])
@@ -393,7 +393,8 @@ def upload_user(request):
                     try:
                         username = row['username']
                         password = row['password']
-                        email = row['email']
+                        email = row['email']# TODO 不要か?
+                        is_editor = True if row['is_editor'].lower() == "true" else False
 
                         # データモデルに保存
                         user, created = User.objects.update_or_create(
@@ -405,6 +406,10 @@ def upload_user(request):
                         if created or not user.check_password(password):# 新規作成またはパスワードが変更された場合
                             user.set_password(password)
                             user.save()
+
+                        if is_editor:
+                            group = Group.objects.get(name='editor')
+                            user.groups.add(group)
 
                         success_count += 1
                     except KeyError as e:
