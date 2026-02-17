@@ -17,6 +17,7 @@
             <tr>
                 <th>大学_学部</th>
                 <th>結果</th>
+                <th>備考</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +25,7 @@
             <tr onclick="window.location.href='{% url 'admission_exam_db:edit_student_admission_exam' student_id=admission_exam.student.student_id student_admission_exam_id=admission_exam.id %}';" style="cursor:pointer;">
                 <td class="admission_exam_display_name">{{ admission_exam.university_faculty.display_name }}</td>
                 <td class="admission_exam_result">{{ admission_exam.get_result_display }}</td>
+                <td class="admission_exam_info">{{ admission_exam.info }}</td>
             </tr>
             {% endfor %}
         </tbody>
