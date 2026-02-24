@@ -19,43 +19,43 @@ import datetime
 logger = logging.getLogger('django')
 
 
-def is_admin(user):
+def is_admin(user): # userがadmin userかどうかを返す
     return user.is_superuser
 
-def is_editor(user):
-    if user.groups.filter(name="editor").exists() or user.is_superuser:
+def is_editor(user): # userがeditor userかどうかを返す
+    if user.groups.filter(name="editor").exists() or user.is_superuser: # userがeditor groupに所属しているかsuper_userであればTrue
         return True
-    else:
+    else: # それ以外がFalse
         return False
 
-@login_required
-def index(request):
-    context = {
+@login_required # ログイン後でないとアクセスできない
+def index(request): # index pageのview ホームのpage
+    context = { # templateの中で使いたい情報
         'nbar': 'home',
     }
     return render(request, "admission_exam_db/index.html", context)
 
-@login_required
-def student(request):
-    student_list = Student.objects.annotate(
-            order_attendance_number=Cast(
+@login_required # ログイン後でないとアクセスできない
+def student(request): # student pageのview 生徒一覧page
+    student_list = Student.objects.annotate( # 生徒リストを卒業年, クラス, 出席番号順に取得
+            order_attendance_number=Cast( # attendance_number自体は文字列扱いなので辞書式でなく数値として正しい順に表示するためにcastする
                 "attendance_number",
                 IntegerField()
             )
         ).order_by("-graduation_year", "homeroom_class", "order_attendance_number")
-    context ={
+    context ={ # templateの中で使いたい情報
         'nbar': 'student',
         'student_list': student_list,
     }
     return render(request, "admission_exam_db/student.html", context)
 
-@login_required
-def admission_exam(request):
-    admission_exam_list = StudentAdmissionExam.objects.order_by("-year_to_take", "university_faculty_id")
+@login_required # ログイン後でないとアクセスできない
+def admission_exam(request): # admission_exam pageのview 受験リストのpage
+    admission_exam_list = StudentAdmissionExam.objects.order_by("-year_to_take", "university_faculty_id") # 受験リストを年度の降順, 大学学部id順に取得
     passed_choices = [ {"key":key, "value":value} for key, value in StudentAdmissionExam.PASSED_CHOICES ]
     rejected_choices = [ {"key":key, "value":value} for key, value in StudentAdmissionExam.REJECTED_CHOICES ]
     yet_choices = [ {"key":key, "value":value} for key, value in StudentAdmissionExam.YET_CHOICES ]
-    context ={
+    context ={ # templateの中で使いたい情報
         'nbar': 'admission_exam',
         'admission_exam_list': admission_exam_list,
         'passed_choices': passed_choices,
@@ -64,8 +64,8 @@ def admission_exam(request):
     }
     return render(request, "admission_exam_db/admission_exam.html", context)
 
-@login_required
-def passed_exam_count(request):
+@login_required # ログイン後でないとアクセスできない
+def passed_exam_count(request): # passed_exam_count の view 大学合格者数のpage
     student_admission_exam = StudentAdmissionExam.objects.filter(result_status="P").all()
     years = sorted(list({ dic["year_to_take"] for dic in student_admission_exam.values("year_to_take") }), reverse=True)
     passed_exam_count_table = {
@@ -100,16 +100,16 @@ def passed_exam_count(request):
         for faculty in university_faculty_list:
             passed_exam_count_table[year][faculty["university_name"]][faculty["faculty_name"]] = {'total':faculty["passed_exam_count"], 'graduates':faculty["passed_exam_count_by_graduates"]}
 
-    context ={
+    context ={ # templateの中で使いたい情報
         'passed_exam_count_table': passed_exam_count_table,
         'nbar': 'passed_exam_count',
     }
     return render(request, "admission_exam_db/passed_exam_count.html", context)
 
-@login_required
-def passed_exam_by_university(request, exam_year, university):
+@login_required # ログイン後でないとアクセスできない
+def passed_exam_by_university(request, exam_year, university): # 大学別合格一覧ページ 大学合格者数ページから飛んでこれるページ
     admission_exam_list = StudentAdmissionExam.objects.filter(university_faculty__university_name=university, year_to_take=exam_year, result_status="P", university_faculty__university_faculty_yearly_codes__year=exam_year).order_by("university_faculty__university_faculty_yearly_codes__university_faculty_code", "-student__graduation_year")
-    context ={
+    context ={ # templateの中で使いたい情報
         'nbar': 'passed_exam_count',
         'exam_year': exam_year,
         'university': university,
@@ -117,8 +117,8 @@ def passed_exam_by_university(request, exam_year, university):
     }
     return render(request, "admission_exam_db/passed_exam_by_university.html", context)
 
-@login_required
-def student_detail(request, student_id):
+@login_required # ログイン後でないとアクセスできない
+def student_detail(request, student_id): # 生徒別受験詳細ページ
     student = get_object_or_404(Student, student_id=student_id)
 
     current_num = int(student.attendance_number) # 現在の生徒の出席番号を一時的に数値化
@@ -145,7 +145,7 @@ def student_detail(request, student_id):
         order_code=Min("university_faculty__university_faculty_yearly_codes__university_faculty_code"),
     ).order_by("-year_to_take", "order_code")
 
-    context ={
+    context ={ # templateの中で使いたい情報
         'nbar': 'student_detail',
         'student_id': student_id,
         'homeroom_class': student.homeroom_class,
@@ -157,9 +157,9 @@ def student_detail(request, student_id):
     }
     return render(request, "admission_exam_db/student_detail.html", context)
 
-@login_required
-@user_passes_test(is_admin)
-def upload_university_faculty(request):
+@login_required # ログイン後でないとアクセスできない
+@user_passes_test(is_admin) # admin user でないとアクセスできない
+def upload_university_faculty(request): # 大学・学部データアップロードページ
     if request.method == "POST":
         form = UniversityFacultyCSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -203,14 +203,14 @@ def upload_university_faculty(request):
             return redirect('admission_exam_db:upload_success') # アップロード成功画面にリダイレクト
     else:
         form = UniversityFacultyCSVUploadForm()
-    context = {
+    context = { # templateの中で使いたい情報
         'nbar': 'upload_university_faculty',
         'form': form,
     }
     return render(request, 'admission_exam_db/upload_university_faculty.html', context)
 
-@login_required
-def download_template_csv(request, file_kind):
+@login_required # ログイン後でないとアクセスできない
+def download_template_csv(request, file_kind): # アップロード用のテンプレートcsvのダウンロードページ
     filename = f"{file_kind}_template.csv"
 
     output = io.StringIO()
@@ -250,9 +250,9 @@ class Echo:# https://docs.djangoproject.com/ja/5.1/howto/outputting-csv/より�
         """Write the value by returning it, instead of storing in a buffer."""
         return value# 受け取った値をそのまま返すのでメモリを消費しない
 
-@login_required
-@user_passes_test(is_editor)
-def download_data_csv(request, file_kind):
+@login_required # ログイン後でないとアクセスできない
+@user_passes_test(is_editor) # editor userでないとアクセスできない
+def download_data_csv(request, file_kind): # データのダウンロード用view
     filename = f"{file_kind}_data.csv"
 
     if file_kind == "student":
@@ -324,16 +324,16 @@ def download_data_csv(request, file_kind):
         headers={"Content-Disposition": f'attachment; filename={filename}'},
     )
 
-@login_required
-def download_data(request):
-    context = {
+@login_required # ログイン後でないとアクセスできない
+def download_data(request): # データのダウンロード選択page
+    context = { # templateの中で使いたい情報
         'nbar': 'download_data',
     }
     return render(request, "admission_exam_db/download_data.html", context)
 
-@login_required
-@user_passes_test(is_admin)
-def upload_student(request):
+@login_required # ログイン後でないとアクセスできない
+@user_passes_test(is_admin) # admin user でないとアクセスできない
+def upload_student(request): # 生徒のデータアップロードページ
     if request.method == "POST":
         form = StudentCSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -369,15 +369,15 @@ def upload_student(request):
             return redirect('admission_exam_db:upload_success') # アップロード成功画面にリダイレクト
     else:
         form = StudentCSVUploadForm()
-    context = {
+    context = { # templateの中で使いたい情報
         'nbar': 'upload_student',
         'form': form,
     }
     return render(request, 'admission_exam_db/upload_student.html', context)
 
-@login_required
-@user_passes_test(is_admin)
-def upload_user(request):
+@login_required # ログイン後でないとアクセスできない
+@user_passes_test(is_admin) # admin user でないとアクセスできない
+def upload_user(request): # ユーザのデータアップロードページ
     if request.method == "POST":
         form = UserCSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -427,19 +427,19 @@ def upload_user(request):
                 messages.error(request, "ファイルのエンコーディングエラーです。UTF-8で保存されたCSVを使用してください。")
     else:
         form = UserCSVUploadForm()
-    context = {
+    context = { # templateの中で使いたい情報
         'nbar': 'upload_user',
         'form': form,
     }
     return render(request, 'admission_exam_db/upload_user.html', context)
 
-def upload_success(request):
-    context = {}
+def upload_success(request): # アップロード成功page
+    context = {} # templateの中で使いたい情報
     return render(request, 'admission_exam_db/upload_success.html', context)
 
-@login_required
-@user_passes_test(is_admin)
-def upload_student_admission_exam(request):
+@login_required # ログイン後でないとアクセスできない
+@user_passes_test(is_admin) # admin user でないとアクセスできない
+def upload_student_admission_exam(request): # 受験データアップロードpage
     if request.method == "POST":
         form = StudentAdmissionExamCSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -484,15 +484,15 @@ def upload_student_admission_exam(request):
             return redirect('admission_exam_db:upload_success') # アップロード成功画面にリダイレクト
     else:
         form = StudentAdmissionExamCSVUploadForm()
-    context = {
+    context = { # templateの中で使いたい情報
         'nbar': 'upload_student_admission_exam',
         'form': form,
     }
     return render(request, 'admission_exam_db/upload_student_admission_exam.html', context)
 
-@login_required
-@user_passes_test(is_editor)
-def create_student_admission_exam(request, student_id):
+@login_required # ログイン後でないとアクセスできない
+@user_passes_test(is_editor) # editor userでないとアクセスできない
+def create_student_admission_exam(request, student_id): # 生徒受験データ作成page
     student = get_object_or_404(Student, student_id=student_id)
     if request.method == 'POST':
         form = StudentAdmissionExamForm(request.POST, student=student)# 生徒はすでに指定しているので、formで新たに入力する手間を省くためにstudentオブジェクトを渡す
@@ -503,7 +503,7 @@ def create_student_admission_exam(request, student_id):
     else:
         form = StudentAdmissionExamForm(student=student)# studentオブジェクトを渡す
 
-    context ={
+    context ={ # templateの中で使いたい情報
         'nbar': 'student',
         'form': form,
         'student_id': student_id,
@@ -511,9 +511,9 @@ def create_student_admission_exam(request, student_id):
     }
     return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
 
-@login_required
-@user_passes_test(is_editor)
-def edit_student_admission_exam(request, student_id, student_admission_exam_id):
+@login_required # ログイン後でないとアクセスできない
+@user_passes_test(is_editor) # editor userでないとアクセスできない
+def edit_student_admission_exam(request, student_id, student_admission_exam_id): # 生徒受験データ編集page
     student = get_object_or_404(Student, student_id=student_id)
     admission_exam = get_object_or_404(StudentAdmissionExam, id=student_admission_exam_id, student=student)
 
@@ -527,7 +527,7 @@ def edit_student_admission_exam(request, student_id, student_admission_exam_id):
     else:
         form = StudentAdmissionExamForm(instance=admission_exam)
 
-    context = {
+    context = { # templateの中で使いたい情報
         'nbar': 'student',
         'form': form,
         'student_id': student_id,
@@ -537,9 +537,9 @@ def edit_student_admission_exam(request, student_id, student_admission_exam_id):
     }
     return render(request, 'admission_exam_db/student_admission_exam_form.html', context)
 
-@login_required
-@user_passes_test(is_editor)
-def delete_student_admission_exam(request, student_id, student_admission_exam_id):
+@login_required # ログイン後でないとアクセスできない
+@user_passes_test(is_editor) # editor userでないとアクセスできない
+def delete_student_admission_exam(request, student_id, student_admission_exam_id): # 生徒受験データ削除画面
     student = get_object_or_404(Student, student_id=student_id)
     admission_exam = get_object_or_404(StudentAdmissionExam, id=student_admission_exam_id, student=student)
 
@@ -550,8 +550,8 @@ def delete_student_admission_exam(request, student_id, student_admission_exam_id
     return redirect('admission_exam_db:student_detail', student_id=student_id)
 
 
-@login_required
-def university_faculty_autocomplete(request):
+@login_required # ログイン後でないとアクセスできない
+def university_faculty_autocomplete(request): # 大学学部オートコンプリートpage
     query = request.GET.get('q', '') # クエリパラメータ 'q' を取得
     year = request.GET.get('y', '') # クエリパラメータ 'year' を取得
     if query:
@@ -563,9 +563,9 @@ def university_faculty_autocomplete(request):
     results = [{"code": faculty.university_faculty_code, "name": faculty.university_faculty.display_name} for faculty in yearlyfaculties]
     return JsonResponse(results, safe=False)
 
-@login_required
-def user(request):
-    context = {
+@login_required # ログイン後でないとアクセスできない
+def user(request): # ユーザーpage
+    context = { # templateの中で使いたい情報
         'nbar': 'user',
     }
     return render(request, 'admission_exam_db/user.html', context)
