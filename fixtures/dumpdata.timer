@@ -1,0 +1,12 @@
+[Unit]
+Run dumpdata.service daily three times
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+OnCalendar=*-*-* 12:00:00
+OnCalendar=*-*-* 18:00:00
+Persistent=true
+Unit=dumpdata.service
+
+[Install]
+WantedBy=timers.target

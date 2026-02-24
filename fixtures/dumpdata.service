@@ -1,0 +1,15 @@
+[Unit]
+Description=Dump juken DB django data
+After=docker.service
+Requires=docker.service
+
+; Update the file paths below if necessary.
+[Service]
+Type=oneshot
+ExecStart=/home/fpcrow/admission_exam_db/fixtures/dumpdata.sh
+
+User=user
+WorkingDirectory=/home/user/admission_exam_db
+
+[Install]
+WantedBy=multi-user.target
