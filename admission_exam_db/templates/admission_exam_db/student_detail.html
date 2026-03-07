@@ -18,6 +18,7 @@
                 <th>大学_学部</th>
                 <th>結果</th>
                 <th>備考</th>
+                <th>受験年</th>
             </tr>
         </thead>
         <tbody>
@@ -26,6 +27,7 @@
                 <td class="admission_exam_display_name">{{ admission_exam.university_faculty.display_name }}</td>
                 <td class="admission_exam_result">{{ admission_exam.get_result_display }}</td>
                 <td class="admission_exam_info">{{ admission_exam.info }}</td>
+                <td class="admission_exam_year_to_take">{{ admission_exam.year_to_take }}</td>
             </tr>
             {% endfor %}
         </tbody>
