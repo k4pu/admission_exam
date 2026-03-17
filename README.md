@@ -83,12 +83,12 @@ systemctl start docker
 ```bash
 # リポジトリをクローン
 git clone git@github.com:k4pu/admission_exam.git 
-cd admission_exam_db
+cd admission_exam
 
 # 以降のコマンドはstudent_admission_exam_dbディレクトリで実行してください.
 
 # logファイルの作成
-touch ./log/{nginx, gunicorn, django}/{access.log error.log}
+touch ./log/{nginx,gunicorn,django}/{access.log,error.log}
 
 # .envファイルを作成
 cp .env.sample .env  # 編集が必要
